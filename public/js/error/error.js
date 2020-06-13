@@ -8,6 +8,9 @@ let error = new Vue({
 			not_found: "Not found",
 			back: "Back",
 			homepage: "Home",
-		};
+		}
 	},
+	created() {
+
+	}
 });

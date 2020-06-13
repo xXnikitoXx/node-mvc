@@ -1,25 +1,34 @@
+const fs = require("fs");
 const { Iterator } = require("./iterator");
 
 class Renderer {
 	constructor(object) {
-		this.object = object;
+		this.model = object;
 	}
 
+	/**
+	 * Renders passed file or html.
+	 * @function
+	 * @param {String} html 
+	 * @returns {String}
+	 */
 	Render(html) {
 		html = html.toString();
-		let items = new Iterator(this.object).ListItems();
+		if (!html.includes("<") && !html.includes(">"))
+			if (fs.existsSync(html))
+				html = fs.readFileSync(html).toString();
+		let items = new Iterator(this.model).ListItems();
 		if (html.includes("<if ")) {
-			html.split("<if ")
-			.slice(1)
+			html.match(/<if (.*)>([^]*?)<\/if>/gm)
 			.map(cs => ({
-				statement: cs.split(">\r\n")[0],
-				body: cs.split(">\r\n")[1].split("</if>")[0],
-				html: "<if " + cs.split("</if>")[0] + "</if>",
+				statement: () => cs.match(/<if ([^].*)>/)[1].replace("model", "this.model"),
+				body: () => cs.match(/<if .*>([^]*?)<\/if>/)[1],
+				html: () => cs,
 			}))
-			.map(cso => html = html.replace(cso.html, eval(cso.statement) ? cso.body : ""));
+			.map(cso => html = html.replace(cso.html(), eval(cso.statement()) ? cso.body() : ""));
 		}
 		for (let item of items)
-			html = html.replace("{{" + item.name + "}}", item.value);
+			html = html.replace("{{model." + item.name + "}}", item.value);
 		return html;
 	}
 }

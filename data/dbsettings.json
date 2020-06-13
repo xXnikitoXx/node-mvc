@@ -1,7 +1,18 @@
 {
 	"mongo": {
 		"collections": {
-			
+			"users": {
+				"model": {
+					"username": [ "string", 4, 30 ],
+					"normalized": [ "string", 4, 30 ],
+					"email": [ "string" ],
+					"password": [ "string", 6, 50 ],
+					"country": [ "string", 3, 3 ],
+					"firstName": [ "string", 2, 50 ],
+					"lastName": [ "string", 2, 50 ],
+					"joinDate": [ "integer" ]
+				}
+			}
 		}
 	}
 }

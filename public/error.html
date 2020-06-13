@@ -1,37 +1,63 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<title>Node MVC</title>
+		<title>{{model.title}}</title>
 		<meta charset="utf-8" />
-		<meta name="author" content="TechLab">
-		<meta property="og:image" content="img/favicon.png" />
-		<link rel="shortcut icon" href="img/favicon.png">
 		<link rel="stylesheet" href="materialize/css/materialize.css">
+		<link rel="stylesheet" href="css/font-awesome/css/font-awesome.css">
+		<link rel="stylesheet" href="css/navbar.css">
+		<link rel="stylesheet" href="css/error.css">
 		<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
-		<script src="js/jquery.js"></script>
+		<script src="js/jQuery.js"></script>
 		<script src="materialize/js/materialize.js"></script>
 		<script src="js/vue.js"></script>
+		<if model.user>
+			<script>
+				const user = {
+					username: "{{model.user.username}}",
+					firstName: "{{model.user.firstName}}",
+					lastName: "{{model.user.lastName}}",
+					joinDate: "{{model.user.joinDate}}",
+				};
+			</script>
+		</if>
+		<if !model.user>
+			<script>
+				const user = false;
+			</script>
+		</if>
 	</head>
 	<body>
 		<nav id="navbar" class="grey darken-4 white-text" style="background-color: #4d4d4d;">
 			<div class="nav-wrapper">
-				<a :href="titleLink" class="brand-logo center">{{ title }}</a>
+				<ul class="left hide-on-med-and-down">
+					<template v-for="tab in leftTabs">
+						<a :href="tab.url" class="waves-effect" :class="{ 'active': tab.active }">{{ tab.text }}</a>
+					</template>
+				</ul>
+				<a :href="titleLink" class="brand-logo center hover-only"><img :src="logo">{{ title }}</a>
+				<ul class="right hide-on-med-and-down">
+					<a v-if="user" href="/profile" class="waves-effect" >{{ user?.username }}</a>
+					<template v-if="!user" v-for="tab in rightTabs">
+						<a :href="tab.url" class="waves-effect" :class="{ 'active': tab.active }">{{ tab.text }}</a>
+					</template>
+				</ul>
 			</div>
 		</nav>
 		<div id="error" class="row" style="margin-top: 264px;">
 			<div class="col m3"></div>
 			<div class="card col m6 grey darken-4 white-text">
 				<div class="card-content" style="padding-top: 0 !important;">
-					<h1 style="font-size: 128pt;">{{statusCode}}</h1>
-					<h4>{{message}}</h4>
+					<h1 style="font-size: 128pt;">{{model.statusCode}}</h1>
+					<h4>{{model.message}}</h4>
 				</div>
 				<div class="card-action">
-					<a class="teal-text" href="javascript:history.back()">{{back}}</a>
-					<a class="teal-text" :href="homepageLink">{{homepage}}</a>
+					<a class="teal-text" href="javascript:history.back()">{{ back }}</a>
+					<a class="teal-text" href="/">{{ homepage }}</a>
 				</div>
 			</div>
 		</div>
-		<script src="js/shared/navbar.js"></script>
+		<script src="js/home/navbar.js"></script>
 		<script src="js/error/error.js"></script>
 	</body>
 </html>

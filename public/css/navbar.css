@@ -1,0 +1,48 @@
+#navbar {
+ 	position: fixed;
+	top: 0;
+	width: 100%;
+	z-index: 1; 
+}
+
+body {
+	padding-top: 64px;
+}
+
+.nav-wrapper .brand-logo img {
+    height: 64px;
+}
+
+.nav-wrapper .brand-logo {
+	transition: all .25s ease-in-out;
+	color: transparent;
+}
+
+.nav-wrapper .brand-logo:hover {
+	color: inherit;
+}
+
+.nav-wrapper .brand-logo img {
+	transition:  all .25s ease-in-out;
+	position: absolute;
+	left: calc(50% - 32px);
+}
+
+.nav-wrapper .brand-logo:hover img {
+	opacity: 0;
+}
+
+.nav-wrapper ul {
+	height: 64px;
+}
+
+.nav-wrapper ul .waves-effect {
+	height: 64px;
+	vertical-align: unset;
+	transition: all 1s ease-in-out;
+	border-bottom: solid 0px white;
+}
+
+.nav-wrapper ul .active {
+	border-bottom: solid 3px teal;
+}

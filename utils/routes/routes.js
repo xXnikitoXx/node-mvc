@@ -1,6 +1,7 @@
 const fs = require("fs");
 const { ErrorHandler, HandleError } = require("./../error");
 const { Logger } = require("./../logger");
+const { Renderer } = require("./../render");
 const routes = JSON.parse(fs.readFileSync(__dirname + "/../../data/routes.json"));
 const messages = JSON.parse(fs.readFileSync(__dirname + "/../../data/messages.json"));
 const routeFiles = fs.readdirSync(__dirname).filter(route => route != "routes.js").map(route => "./" + route.split(".js")[0]);
@@ -13,17 +14,35 @@ const customRoutes = JSON.parse(fs.readFileSync(__dirname + "/../../data/customR
  * @param {any} utils
  */
 module.exports = (app, utils) => {
+	utils.logger.messages.configuring("/", "GET");
+	app.get("/", (req, res) => {
+		utils.logger.messages.request("/");
+		let user = false;
+		if (req.user)
+			user = {
+				username: req.user.username,
+				firstName: req.user.firstName,
+				lastName: req.user.lastName,
+				joinDate: req.user.joinDate,
+			};
+		let renderer = new Renderer({
+			title: "Website",
+			lang: req.lang,
+			user: user,
+		});
+		res.send(renderer.Render(utils.public + "/home.html"));
+    });
+	
 	for (let route in routes) {
-		utils.logger.messages.configuring(route);
+		utils.logger.messages.configuring(route, "GET");
 		app.get(route, (req, res) => {
 			utils.logger.messages.request(route);
-			console.log(__dirname + "/../../public/" + routes[route]);
-			res.sendFile(__dirname + "/../../public/" + routes[route]);
+			res.sendFile(utils.public + "/" + routes[route]);
 		});
 	}
 	
 	for (let message in messages) {
-		utils.logger.messages.configuring("/" + message);
+		utils.logger.messages.configuring("/" + message, "GET");
 		app.get("/" + message, (req, res) => {
 			utils.logger.messages.request("/" + message);
 			let errorCode = Number(message);
@@ -37,7 +56,7 @@ module.exports = (app, utils) => {
 	for (let route of customRoutes)
 		require(route)(app, utils);
 
-	app.use((err, req, res, next) => { HandleError(err, res); });
+	app.use((err, req, res, next) => { HandleError(err, req, res); });
 	app.use((req, res, next) => {
 		if (!req.route) {
 			let errorCode = 404;

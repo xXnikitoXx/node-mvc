@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>{{model.title}}</title>
+		<meta charset="utf-8" />
+		<link rel="stylesheet" href="materialize/css/materialize.css">
+		<link rel="stylesheet" href="css/navbar.css">
+		<link rel="stylesheet" href="css/error.css">
+		<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
+		<script src="js/jquery.js"></script>
+		<script src="materialize/js/materialize.js"></script>
+		<script src="js/vue.js"></script>
+		<if model.user>
+			<script>
+				const user = {
+					username: "{{model.user.username}}",
+					firstName: "{{model.user.firstName}}",
+					lastName: "{{model.user.lastName}}",
+					joinDate: "{{model.user.joinDate}}",
+				};
+			</script>
+		</if>
+		<if !model.user>
+			<script>
+				const user = false;
+			</script>
+		</if>
+	</head>
+	<body>
+		<nav id="navbar" class="grey darken-4 white-text" style="background-color: #4d4d4d;">
+			<div class="nav-wrapper">
+				<ul class="left hide-on-med-and-down">
+					<template v-for="tab in leftTabs">
+						<a :href="tab.url" class="waves-effect" :class="{ 'active': tab.active }">{{ tab.text }}</a>
+					</template>
+				</ul>
+				<a :href="titleLink" class="brand-logo center hover-only"><img :src="logo">{{ title }}</a>
+				<ul class="right hide-on-med-and-down">
+					<a v-if="user" href="/profile" class="waves-effect" >{{ user?.username }}</a>
+					<template v-if="!user" v-for="tab in rightTabs">
+						<a :href="tab.url" class="waves-effect" :class="{ 'active': tab.active }">{{ tab.text }}</a>
+					</template>
+				</ul>
+			</div>
+		</nav>
+		<script src="js/home/navbar.js"></script>
+		<script>
+			navbar.leftTabs[0].active = true;
+		</script>
+	</body>
+</html>

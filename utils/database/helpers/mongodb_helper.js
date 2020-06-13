@@ -12,6 +12,9 @@ class DBHelper {
 		return this.db.listCollections({}, { nameOnly: true }).toArray();
 	}
 
+	get Name() { return this.dbName; }
+	get Client() { return this.client; }
+
 	EnsureCreated() {
 		this.Collections.then(data => {
 			this.collections = data.map(x => x.name);
@@ -30,8 +33,14 @@ class DBHelper {
 		return collection;
 	}
 
+	Find(collection, object) {
+		if (typeof(collection) === "string")
+			collection = this.Collection(collection);
+		return collection.findOne(object)
+	}
+
 	Insert(collection, objects) {
-		if (typeof collection == "string")
+		if (typeof(collection) === "string")
 			collection = this.Collection(collection);
 		if (!Array.isArray(objects))
 			objects = [ objects ];

@@ -6467,7 +6467,7 @@ button.close {
   cursor: pointer;
   background-color: #fff \9;
   background-color: rgba(0, 0, 0, 0);
-  border: 1px solid #dd3;
+  border: 1px solid #d3;
   border-radius: 10px;
   border-color: gray;
 }

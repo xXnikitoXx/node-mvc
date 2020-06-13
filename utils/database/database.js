@@ -7,12 +7,8 @@ const appSettings = JSON.parse(fs.readFileSync(__dirname + "/../../data/appsetti
 const dbSettings = JSON.parse(fs.readFileSync(__dirname + "/../../data/dbsettings.json"));
 
 module.exports = new Promise((resolve, reject) => {
-	if (appSettings.connectionString == "" || appSettings.connectionString == null || appSettings.connectionString == undefined) {
-		resolve(null);
-		return;
-	}
 	let db;
-	MongoClient.connect(appSettings.connectionString, (err, client) => {
+	MongoClient.connect(appSettings.connectionString, { useUnifiedTopology: true }, (err, client) => {
 		if (err) {
 			logger.messages.dbError(err);
 			return;
