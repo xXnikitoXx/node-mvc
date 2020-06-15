@@ -10,6 +10,8 @@ const languages = [ "en", "bg", "de", "fr", "it", "es", "tr", "ru", "ja", "zh", 
  * @param {any} utils
  */
 module.exports = (app, utils) => {
+	if (!utils.db)
+		return;
     app.use((req, res, next) => {
         if (!req.session.lang || !languages.some(l => l == req.session.lang)) {
             req.session.lang = "en";

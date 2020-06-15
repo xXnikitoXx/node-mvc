@@ -22,6 +22,7 @@ class Server {
 		this.production = production;
 		this.logger = new Logger(log);
 		this.appSettings = JSON.parse(fs.readFileSync(__dirname + "/../data/appsettings.json"));
+		this.dbConnect = require("./database/database");
 		if (fs.existsSync(__dirname + "/../certs"))
 			this.sslCredentials = {
 				ca: fs.readFileSync(__dirname + "/.." + this.appSettings.ssl.ca),
@@ -36,29 +37,36 @@ class Server {
 	 * @param {number} securePort 
 	 */
 	Run(port = process.env.PORT, securePort = process.env.SECURE_PORT) {
-		return new Promise((resolve, reject) => {
-			require("./database/database").then(db => {
-				this.db = db;
-				db.EnsureCreated();
-				this.app = express();
-				let utils = {
-					logger: this.logger,
-					db: this.db,
-					public: path.join(__dirname + "/../public"),
-					data: path.join(__dirname + "/../data"),
-				};
-				this.middleware = require("./middleware/middleware")(this.app, utils);
-				require("./routes/routes")(this.app, utils);
-				this.injector = new Injector(utils);
-				this.port = port || 80;
-				this.securePort = securePort || 443;
-				this.httpServer = http.createServer(this.app).listen(this.port);
-				this.logger.messages.listening(this.port);
-				let httpsServer = https.createServer(this.sslCredentials, this.app);
-				httpsServer.listen(this.securePort);
-				this.logger.messages.listening(this.securePort);
-				resolve();
-			});
+		return new Promise(async (resolve, reject) => {
+			if (this.appSettings.connectToDatabase)
+				try {
+					this.db = await this.dbConnect;
+					db.EnsureCreated();
+				} catch {
+					if (this.appSettings.databaseRequired) {
+						this.logger.message.dbRequired();
+						this.logger.message.stopping();
+						process.exit();
+					}
+				}
+			this.app = express();
+			let utils = {
+				logger: this.logger,
+				db: this.db,
+				public: path.join(__dirname + "/../public"),
+				data: path.join(__dirname + "/../data"),
+			};
+			this.middleware = require("./middleware/middleware")(this.app, utils);
+			require("./routes/routes")(this.app, utils);
+			this.injector = new Injector(utils);
+			this.port = port || 80;
+			this.securePort = securePort || 443;
+			this.httpServer = http.createServer(this.app).listen(this.port);
+			this.logger.messages.listening(this.port);
+			let httpsServer = https.createServer(this.sslCredentials, this.app);
+			httpsServer.listen(this.securePort);
+			this.logger.messages.listening(this.securePort);
+			resolve();
 		});
 	}
 

@@ -9,6 +9,9 @@ const { AccountManager } = require("./../services/accountManager");
  * @param {any} utils
  */
 module.exports = (app, utils) => {
+	if (!utils.db)
+		return;
+
 	let accountManager = new AccountManager(utils);
 
 	utils.logger.messages.configuring("/register", "GET");

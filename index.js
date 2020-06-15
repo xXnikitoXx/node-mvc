@@ -21,4 +21,4 @@ server.Run().then(async () => {
         if (!keepAlive)
             process.exit(0);
     }
-});
+}).catch(console.log);

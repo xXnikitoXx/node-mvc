@@ -20,12 +20,16 @@ class AccountManager {
 	 * @constructs AccountManager
 	 */
 	constructor(utils) {
+		if (!utils.db)
+			return;
 		this.utils = utils;
 		this.users = utils.db.Collection("users");
 		this.userValidator = new Validator(userModel);
 	}
 
 	Register(data) {
+		if (!utils.db)
+			return;
 		return new Promise((resolve, reject) => {
 			this.users
 			.find({ normalized: data.normalized })

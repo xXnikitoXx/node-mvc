@@ -1,10 +1,10 @@
 {
-	"name": "techlab",
+	"name": "node-mvc",
 	"version": "1.0.0",
 	"description": "",
 	"main": "server.js",
 	"scripts": {
-		"start": "node --max-old-space-size=10240 index.js"
+		"start": "node index.js"
 	},
 	"author": "xXnikitoXx",
 	"license": "ISC",

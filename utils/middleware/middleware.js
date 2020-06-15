@@ -24,19 +24,21 @@ module.exports = function(app, utils) {
 	app.use(bodyParser.urlencoded({ extended: true }));
 	app.use(express.json({ type: [ "application/json", "text/plain"] }));
 	app.use(cookieParser());
-	app.use(session({
-		secret: process.env.SESSION_SECRET || "eksdi",
-		save: true,
-		resave: false,
-		saveUninitialized: false,
-		store: new MongoStore({
-			client: utils.db.Client,
-			dbName: utils.db.Name,
-		}),
-		cookie: { secure: false },
-	}));
-	app.use(passport.initialize());
-	app.use(passport.session());
+	if (utils.db) {
+		app.use(session({
+			secret: process.env.SESSION_SECRET || "eksdi",
+			save: true,
+			resave: false,
+			saveUninitialized: false,
+			store: new MongoStore({
+				client: utils.db.Client,
+				dbName: utils.db.Name,
+			}),
+			cookie: { secure: false },
+		}));
+		app.use(passport.initialize());
+		app.use(passport.session());
+	}
 	app.use(function (req, res, next) {
 		res.setHeader("X-Powered-By", "Tech Lab");
 		next();

@@ -17,6 +17,7 @@ class Logger {
 			dbConnected: () => l(gb("Connected to database")),
 			dbChecked: () => l(gb("Database checked")),
 			dbError: (error) => l(rb("A database error occured:\n") + r(error)),
+			dbRequired: () => l(rb("A connection with database is mandatory!\n")),
 			dbInserted: (amount) => l(gb("Inserted ") + m(amount) + gb(" records in the database")),
 			updateingCollections: () => l(gb("Updating collections")),
 			createdCollection: (name) => l(gb("Created collection ") + m(name)),
@@ -25,6 +26,7 @@ class Logger {
 			request: (url) => l(yb("Requested " + url)),
 			listening: (port) => l(gb("The server is listening on port: ") + m(port)),
 			fsExistError: (name) => e(`File or directory "${name}" does not exist!`),
+			stopping: () => l(rb("Stopping server!\n")),
 		};
 	}
 }

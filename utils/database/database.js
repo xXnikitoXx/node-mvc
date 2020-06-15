@@ -11,6 +11,7 @@ module.exports = new Promise((resolve, reject) => {
 	MongoClient.connect(appSettings.connectionString, { useUnifiedTopology: true }, (err, client) => {
 		if (err) {
 			logger.messages.dbError(err);
+			reject(err);
 			return;
 		}
 		logger.messages.dbConnected();

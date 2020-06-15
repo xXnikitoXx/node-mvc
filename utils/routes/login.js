@@ -8,6 +8,8 @@ const { Renderer } = require("./../render");
  * @param {any} utils
  */
 module.exports = (app, utils) => {
+	if (!utils.db)
+		return;
     utils.logger.messages.configuring("/login", "GET");
     app.get("/login", utils.loginRedirect.forbidden, utils.csrfProtection, (req, res, next) => {
         utils.logger.messages.request("/login");
