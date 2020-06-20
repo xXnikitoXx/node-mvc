@@ -25,6 +25,25 @@ class AccountManager {
 			return;
 		this.users = utils.db.Collection("users");
 		this.userValidator = new Validator(userModel);
+		this.users.findOne({ username: "admin" })
+		.then(user => {
+			if (user == null)	
+				this.Register({
+					username: "admin",
+					normalized: "ADMIN",
+					email: "admin@pmgkk.com",
+					password: "admin!",
+					confirmPassword: "admin!",
+					firstName: "root",
+					middleName: "admin",
+					lastName: "user",
+					joinDate: Date.now(),
+					role: Object.keys(require("./../enums/roles")).length - 1,
+				})
+				.then(() => {})
+				.catch(console.log);
+		})
+		.catch(console.log);
 	}
 
 	Register(data) {

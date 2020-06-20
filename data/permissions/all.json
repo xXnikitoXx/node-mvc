@@ -1,0 +1,16 @@
+[
+	"account.register.admin",
+	"account.register.user",
+	
+	"account.delete.admin",
+	"account.delete.user",
+
+	"account.edit.admin",
+	"account.edit.user",
+	
+	"database.record.delete",
+	"database.record.write",
+	"database.collection.create",
+	"database.collection.drop",
+	"database.database.drop"
+]

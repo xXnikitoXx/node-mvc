@@ -1,6 +1,5 @@
 const { Logger } = require("./../logger");
 const { Renderer } = require("./../render");
-const { AccountManager } = require("./../services/accountManager");
 
 /**
  * Initializes registration routes.
@@ -11,8 +10,6 @@ const { AccountManager } = require("./../services/accountManager");
 module.exports = (app, utils) => {
 	if (!utils.db)
 		return;
-
-	let accountManager = new AccountManager(utils);
 
 	utils.logger.messages.configuring("/register", "GET");
 	app.get("/register", utils.loginRedirect.forbidden, utils.csrfProtection, (req, res) => {
@@ -29,7 +26,7 @@ module.exports = (app, utils) => {
 	utils.logger.messages.configuring("/register", "POST");
 	app.post("/register", utils.loginRedirect.forbidden, utils.csrfProtection, (req, res) => {
 		utils.logger.messages.request("/register");
-		accountManager.Register(req.body).then(data => {
+		utils.accountManager.Register(req.body).then(data => {
 			res.redirect("/login");
 		}).catch(err => {
 			let obj = {
