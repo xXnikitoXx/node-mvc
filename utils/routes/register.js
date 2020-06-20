@@ -23,7 +23,7 @@ module.exports = (app, utils) => {
 			csrfToken: req.csrfToken(),
 			error: "",
 		});
-		res.send(renderer.Render(utils.public + "/register.html"));
+		res.send(renderer.Render(utils.public + "/register.html"))
 	});
 
 	utils.logger.messages.configuring("/register", "POST");

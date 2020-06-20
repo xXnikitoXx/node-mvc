@@ -20,15 +20,15 @@ class AccountManager {
 	 * @constructs AccountManager
 	 */
 	constructor(utils) {
-		if (!utils.db)
-			return;
 		this.utils = utils;
+		if (!this.utils.db)
+			return;
 		this.users = utils.db.Collection("users");
 		this.userValidator = new Validator(userModel);
 	}
 
 	Register(data) {
-		if (!utils.db)
+		if (!this.utils.db)
 			return;
 		return new Promise((resolve, reject) => {
 			this.users
