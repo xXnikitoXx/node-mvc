@@ -11,7 +11,7 @@ module.exports = (utils) => new LocalStrategy((username, password, done) => {
 		if (user == null)
 			done(null, false);
 		else {
-			password = crypto.SHA256(user.username + password + user.joinDate).toString();
+			password = crypto.SHA256(utils.settings.secret + password + user.joinDate).toString();
 			if (password == user.password)
 				done(null, user);
 			else done(null, false);

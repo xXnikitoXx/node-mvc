@@ -1,3 +1,4 @@
+const fs = require("fs");
 const path = require("path");
 const express = require("express");
 const { Logger } = new require("./logger");
@@ -6,7 +7,6 @@ const { AccountManager } = require("./services/accountManager");
 const { PermissionManager } = require("./services/permissionManager");
 const http = require("http");
 const https = require("https");
-const fs = require("fs");
 
 /**
  * Basic webserver with routing and middleware.
@@ -24,7 +24,6 @@ class Server {
 		this.production = production;
 		this.logger = new Logger(log);
 		this.appSettings = JSON.parse(fs.readFileSync(__dirname + "/../data/appsettings.json"));
-		this.dbConnect = require("./database/database");
 		if (fs.existsSync(__dirname + "/../certs"))
 			this.sslCredentials = {
 				ca: fs.readFileSync(__dirname + "/.." + this.appSettings.ssl.ca),
@@ -42,6 +41,7 @@ class Server {
 		return new Promise(async (resolve, reject) => {
 			if (this.appSettings.connectToDatabase)
 				try {
+					this.dbConnect = require("./database/database");
 					this.db = await this.dbConnect;
 					db.EnsureCreated();
 				} catch {
@@ -53,6 +53,8 @@ class Server {
 				}
 			this.app = express();
 			let utils = {
+				appSettings: this.appSettings,
+				dbSettings: this.dbSettings,
 				logger: this.logger,
 				db: this.db,
 				public: path.join(__dirname + "/../public"),
@@ -70,9 +72,11 @@ class Server {
 			this.securePort = securePort || 443;
 			this.httpServer = http.createServer(this.app).listen(this.port);
 			this.logger.messages.listening(this.port);
-			let httpsServer = https.createServer(this.sslCredentials, this.app);
-			httpsServer.listen(this.securePort);
-			this.logger.messages.listening(this.securePort);
+			if (!this.appSettings.proxied) {
+				let httpsServer = https.createServer(this.sslCredentials, this.app);
+				httpsServer.listen(this.securePort);
+				this.logger.messages.listening(this.securePort);
+			}
 			resolve();
 		});
 	}

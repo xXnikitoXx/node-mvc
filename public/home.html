@@ -36,7 +36,7 @@
 				</ul>
 				<a :href="titleLink" class="brand-logo center hover-only"><img :src="logo">{{ title }}</a>
 				<ul class="right hide-on-med-and-down">
-					<a v-if="user" href="/profile" class="waves-effect" >{{ user?.username }}</a>
+					<a v-if="user" href="/profile" class="waves-effect" >{{ user.username }}</a>
 					<template v-if="!user" v-for="tab in rightTabs">
 						<a :href="tab.url" class="waves-effect" :class="{ 'active': tab.active }">{{ tab.text }}</a>
 					</template>

@@ -2,6 +2,7 @@ const fs = require("fs");
 const { Validator } = require("./../database/validator");
 const dbConfig = JSON.parse(fs.readFileSync(__dirname + "/../../data/dbsettings.json")).mongo.collections;
 const userModel = dbConfig.users.model;
+const defaultAdmin = dbConfig.users.defaults.admin;
 const crypto = {
 	SHA256: require("sha256"),
 	MD5: require("md5"),
@@ -29,14 +30,7 @@ class AccountManager {
 		.then(user => {
 			if (user == null)	
 				this.Register({
-					username: "admin",
-					normalized: "ADMIN",
-					email: "admin@pmgkk.com",
-					password: "admin!",
-					confirmPassword: "admin!",
-					firstName: "root",
-					middleName: "admin",
-					lastName: "user",
+					...defaultAdmin,
 					joinDate: Date.now(),
 					role: Object.keys(require("./../enums/roles")).length - 1,
 				})
@@ -84,6 +78,24 @@ class AccountManager {
 				else reject(0);
 			});
 		});
+	}
+
+	Find(filter) {
+		if (!this.utils.db)
+			return;
+		return this.users.find(filter);
+	}
+
+	DeleteOne(filter) {
+		if (!this.utils.db)
+			return;
+		return this.users.deleteOne(filter);
+	}
+
+	DeleteMany(filter) {
+		if (!this.utils.db)
+			return;
+		return this.users.deleteMany(filter);
 	}
 }
 

@@ -10,7 +10,21 @@
 					"country": [ "string", 3, 3 ],
 					"firstName": [ "string", 2, 50 ],
 					"lastName": [ "string", 2, 50 ],
-					"joinDate": [ "integer" ]
+					"joinDate": [ "integer" ],
+					"emailConfirmed": [ "boolean" ]
+				},
+				"defaults": {
+					"admin": {
+						"username": "admin",
+						"normalized": "ADMIN",
+						"email": "admin@example.com",
+						"password": "admin!",
+						"confirmPassword": "admin!",
+						"firstName": "root",
+						"middleName": "admin",
+						"lastName": "user",
+						"emailConfirmed": true
+					}
 				}
 			}
 		}

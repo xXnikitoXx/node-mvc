@@ -8,11 +8,12 @@ const { Renderer } = require("./../render");
  * @param {any} utils
  */
 module.exports = (app, utils) => {
-	if (!utils.db)
-		return;
-
 	utils.logger.messages.configuring("/register", "GET");
 	app.get("/register", utils.loginRedirect.forbidden, utils.csrfProtection, (req, res) => {
+		if (!utils.db) {
+			res.redirect("/404");
+			return;
+		}
 		utils.logger.messages.request("/register");
 		let renderer = new Renderer({
 			title: "Register",
@@ -25,6 +26,10 @@ module.exports = (app, utils) => {
 
 	utils.logger.messages.configuring("/register", "POST");
 	app.post("/register", utils.loginRedirect.forbidden, utils.csrfProtection, (req, res) => {
+		if (!utils.db) {
+			res.redirect("/404");
+			return;
+		}
 		utils.logger.messages.request("/register");
 		utils.accountManager.Register(req.body).then(data => {
 			res.redirect("/login");
@@ -58,4 +63,4 @@ module.exports = (app, utils) => {
 			res.send(renderer.Render(utils.public + "/register.html"));
 		});
 	});
-}
+};
