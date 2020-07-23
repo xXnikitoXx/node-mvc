@@ -4,7 +4,10 @@
 	"description": "",
 	"main": "server.js",
 	"scripts": {
-		"start": "node index.js"
+		"start": "node index",
+		"test": "mocha tests",
+		"create": "node ./builder/create",
+		"remove": "node ./builder/remove"
 	},
 	"author": "xXnikitoXx",
 	"license": "ISC",

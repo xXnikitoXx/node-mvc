@@ -1,4 +1,3 @@
-const { Logger } = require("./../logger");
 const { Renderer } = require("./../render");
 
 /**

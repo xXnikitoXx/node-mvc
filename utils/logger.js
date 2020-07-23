@@ -14,6 +14,8 @@ const e = (err) => l(rb(err));
 class Logger {
 	constructor() {
 		this.messages = {
+			builderError: (error) => l(rb("Builder failed:\n" + r(error))),
+			builderSuccess: (msg) => l(gb(msg)),
 			dbConnected: () => l(gb("Connected to database")),
 			dbChecked: () => l(gb("Database checked")),
 			dbError: (error) => l(rb("A database error occured:\n") + r(error)),

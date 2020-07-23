@@ -1,4 +1,3 @@
-const { Logger } = require("./../logger");
 const { Renderer } = require("./../render");
 
 /**
@@ -8,15 +7,15 @@ const { Renderer } = require("./../render");
  * @param {any} utils
  */
 module.exports = (app, utils) => {
-    app.get("/terms", (req, res) => {
+	app.get("/terms", (req, res) => {
+
+	});
+
+	app.get("/privacy", (req, res) => {
 
     });
 
-    app.get("/privacy", (req, res) => {
-        
-    });
+	app.get("/contact", (req, res) => {
 
-    app.get("/contact", (req, res) => {
-
-    });
+	});
 };
