@@ -1,5 +1,4 @@
 const fs = require("fs");
-const { Renderer } = require("../../utils/render");
 
 module.exports = (() => {
 	describe("Renderer functionality", () => {

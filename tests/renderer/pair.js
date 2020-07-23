@@ -2,6 +2,7 @@ const fs = require("fs");
 const chai = require("chai");
 const expect = chai.expect;
 const assert = chai.assert;
+const should = chai.should();
 
 const { Renderer } = require("./../../utils/render");
 
