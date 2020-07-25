@@ -61,7 +61,7 @@ class AccountManager {
 									data.normalized = data.username.toUpperCase();
 									data.joinDate = Date.now();
 									if (this.userValidator.IsValid(data)) {
-										data.password = crypto.SHA256(data.username + data.password + data.joinDate).toString();
+										data.password = crypto.SHA256(this.utils.settings.secret + data.password + data.joinDate).toString();
 										this.users
 										.insertOne(data)
 										.then(() => {
