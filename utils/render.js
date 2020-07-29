@@ -1,16 +1,14 @@
 const fs = require("fs");
+const path = require("path");
 const { Iterator } = require("./iterator");
+
+const templateError = "Template not found!";
 
 class Renderer {
 	constructor(object) {
 		this.model = object;
-		this.model.users = [
-			{ name: "pesho", age: 12 },
-			{ name: "gosho", age: 13 },
-			{ name: "kolyo", age: 14 },
-		];
 		this.pattern = {
-			openTag: /<(if|for|switch)\b(.*)>/,
+			openTag: /<(if|for|switch|import|export)\b(.*)>/,
 		}
 	}
 
@@ -41,7 +39,6 @@ class Renderer {
 				case "for":
 					let template = body;
 					body = "";
-
 					function iterateWith(str, values) {
 						let result = str;
 						for (let v in values) {
@@ -53,7 +50,6 @@ class Renderer {
 						}
 						return result;
 					}
-
 					let variables = statement.split("let ")[1].split("=")[0].replace(/[\[\]]/g, "").replace(" ", "").split(",");
 					variables.toValues = function() {
 						let result = {};
@@ -69,11 +65,41 @@ class Renderer {
 				case "switch":
 
 					break;
+				case "import":
+					let exports = Renderer.Import(statement);
+					Object.keys(exports)
+					.forEach(e => body = body.replace(new RegExp(`<${e}>`, "g"), exports[e]));
+					html = html.substring(0, index) + body + html.substring(index + tag.length + nextClosingTag + `</${operator}>`.length);
+					break;
+				case "export":
+					html = html.substring(0, index) + body + html.substring(index + tag.length + nextClosingTag + `</${operator}>`.length);
+					break;
+					break;
 			}
 		}
 		for (let item of items)
-			html = html.replace("{{model." + item.name + "}}", item.value);
+			html = html.replace(new RegExp("{{model." + item.name + "}}", "g"), item.value);
 		return html;
+	}
+
+	static Import(statement) {
+		let target = path.join(__dirname + "/../public", statement.replace(/[\s\\\.\-]/g, "/")) + ".html";
+		if (!fs.existsSync(target))
+			throw new Error(templateError);
+		let content = fs.readFileSync(target).toString();
+		let pairs = [];
+		let exports = {};
+		let total = content.match(/<export .*>/g).length;
+		for (let i = 0; i < total; i++)
+			pairs.push([ Renderer.NthOccurrence(content, "<export ", i) ]);
+		pairs.forEach(p => {
+			let name = content.substring(p[0] + "<export ".length).split(">")[0];
+			let bodyIndex = p[0] + "<export ".length + name.length + 1;
+			p[1] = Renderer.Pair("export", content.substring(bodyIndex));
+			let body = content.substring(bodyIndex, p[1] + bodyIndex);
+			exports[name] = body;
+		});
+		return exports;
 	}
 
 	static Pair(tag, body) {
@@ -83,7 +109,7 @@ class Renderer {
 		for (let p of parts) {
 			closingTags++;
 			let match = p.match(new RegExp(`<${tag}(.*)`, "g"));
-			if (match != null) 
+			if (match != null)
 				openTags += match.length;
 			else {
 				if (closingTags > openTags)

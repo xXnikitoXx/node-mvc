@@ -28,36 +28,25 @@
 		</if>
 	</head>
 	<body>
-		<nav id="navbar" class="grey darken-4 white-text" style="background-color: #4d4d4d;">
-			<div class="nav-wrapper">
-				<ul class="left hide-on-med-and-down">
-					<template v-for="tab in leftTabs">
-						<a :href="tab.url" class="waves-effect" :class="{ 'active': tab.active }">{{ tab.text }}</a>
-					</template>
-				</ul>
-				<a :href="titleLink" class="brand-logo center hover-only"><img :src="logo">{{ title }}</a>
-				<ul class="right hide-on-med-and-down">
-					<a v-if="user" href="/profile" class="waves-effect" >{{ user?.username }}</a>
-					<template v-if="!user" v-for="tab in rightTabs">
-						<a :href="tab.url" class="waves-effect" :class="{ 'active': tab.active }">{{ tab.text }}</a>
-					</template>
-				</ul>
-			</div>
-		</nav>
-		<div id="error" class="row" style="margin-top: 264px;">
-			<div class="col m3"></div>
-			<div class="card col m6 grey darken-4 white-text">
-				<div class="card-content" style="padding-top: 0 !important;">
-					<h1 style="font-size: 128pt;">{{model.statusCode}}</h1>
-					<h4>{{model.message}}</h4>
-				</div>
-				<div class="card-action">
-					<a class="teal-text" href="javascript:history.back()">{{ back }}</a>
-					<a class="teal-text" href="/">{{ homepage }}</a>
+		<import templates.generic.navbar>
+			<default>
+			<script src="js/home/navbar.js"></script>
+		</import>
+		<export default>
+			<div id="error" class="row" style="margin-top: 264px;">
+				<div class="col m3"></div>
+				<div class="card col m6 grey darken-4 white-text">
+					<div class="card-content" style="padding-top: 0 !important;">
+						<h1 style="font-size: 128pt;">{{model.statusCode}}</h1>
+						<h4>{{model.message}}</h4>
+					</div>
+					<div class="card-action">
+						<a class="teal-text" href="javascript:history.back()">{{ back }}</a>
+						<a class="teal-text" href="/">{{ homepage }}</a>
+					</div>
 				</div>
 			</div>
-		</div>
-		<script src="js/home/navbar.js"></script>
-		<script src="js/error/error.js"></script>
+			<script src="js/error/error.js"></script>
+		</export>
 	</body>
 </html>

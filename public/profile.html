@@ -6,7 +6,7 @@
 		<link rel="stylesheet" href="materialize/css/materialize.css">
 		<link rel="stylesheet" href="css/navbar.css">
 		<link rel="stylesheet" href="css/error.css">
-		<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
+		<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" crossorigin="anonymous">
 		<script src="js/jquery.js"></script>
 		<script src="materialize/js/materialize.js"></script>
 		<script src="js/vue.js"></script>
@@ -30,12 +30,32 @@
 		<import templates.generic.navbar>
 			<default>
 			<script src="js/home/navbar.js"></script>
-			<script>
-				navbar.leftTabs[0].active = true;
-			</script>
 		</import>
-		<export default>
-			
-		</export>
+		<div class="container">
+			<table>
+				<tbody>
+					<tr>
+						<td>Username:</td>
+						<td>{{model.user.username}}</td>
+					</tr>
+					<tr>
+						<td>Email:</td>
+						<td>{{model.user.email}}</td>
+					</tr>
+					<tr>
+						<td>First Name:</td>
+						<td>{{model.user.firstName}}</td>
+					</tr>
+					<tr>
+						<td>Middle Name:</td>
+						<td>{{model.user.middleName}}</td>
+					</tr>
+					<tr>
+						<td>Last Name:</td>
+						<td>{{model.user.lastName}}</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
 	</body>
 </html>
