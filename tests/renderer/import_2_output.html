@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<title>Document</title>
+	</head>
+	<body>
+		
+			
+	<nav id="navbar" class="grey darken-4 white-text" style="background-color: #4d4d4d;">
+		<div class="nav-wrapper">
+			<ul class="left hide-on-med-and-down">
+				<template v-for="tab in leftTabs">
+					<a :href="tab.url" class="waves-effect" :class="{ 'active': tab.active }">{{ tab.text }}</a>
+				</template>
+			</ul>
+			<a :href="titleLink" class="brand-logo center hover-only"><img :src="logo">{{ title }}</a>
+			<ul class="right hide-on-med-and-down">
+				<template v-for="tab in rightTabs">
+					<a :href="tab.url" class="waves-effect" :class="{ 'active': tab.active }">{{ tab.text }}</a>
+				</template>
+			</ul>
+		</div>
+	</nav>
+
+		
+	</body>
+</html>
