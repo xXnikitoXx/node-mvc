@@ -32,7 +32,10 @@ module.exports = (app, utils) => {
 		});
 		res.send(renderer.Render(utils.public + "/home.html"));
     });
-	
+
+	//utils.logger.messages.configuring("/import", "POST");
+	//app.post("/import")
+
 	for (let route in routes) {
 		utils.logger.messages.configuring(route, "GET");
 		app.get(route, (req, res) => {
@@ -40,7 +43,7 @@ module.exports = (app, utils) => {
 			res.sendFile(utils.public + "/" + routes[route]);
 		});
 	}
-	
+
 	for (let message in messages) {
 		utils.logger.messages.configuring("/" + message, "GET");
 		app.get("/" + message, (req, res) => {

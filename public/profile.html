@@ -12,12 +12,7 @@
 		<script src="js/vue.js"></script>
 		<if model.user>
 			<script>
-				const user = {
-					username: "{{model.user.username}}",
-					firstName: "{{model.user.firstName}}",
-					lastName: "{{model.user.lastName}}",
-					joinDate: "{{model.user.joinDate}}",
-				};
+				const user = {{...model.user}};
 			</script>
 		</if>
 		<if !model.user>

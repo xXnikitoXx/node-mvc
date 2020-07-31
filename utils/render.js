@@ -101,6 +101,10 @@ class Renderer {
 		}
 		for (let item of items)
 			html = html.replace(new RegExp("{{model." + item.name + "}}", "g"), item.value);
+		let spreads = html.match(/{{(\.\.\.model.*)}}/g);
+		if (spreads != null)
+			for (let sp of spreads)
+				html = html.replace(new RegExp(sp, "g"), JSON.stringify(eval(sp.replace(/model/g, "this.model").slice(5, -2))));
 		return html;
 	}
 
