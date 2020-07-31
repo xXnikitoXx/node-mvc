@@ -33,8 +33,8 @@ class Renderer {
 			body = body.substring(0, nextClosingTag);
 			switch (operator) {
 				case "if":
-					let result = eval(statement.replace("model.", "this.model."));
-					html = html.substring(0, index) + (result ? body : "") + html.substring(index + tag.length + nextClosingTag + `</${operator}>`.length);
+					let ifResult = eval(statement.replace(/model./g, "this.model."));
+					html = html.substring(0, index) + (ifResult ? body : "") + html.substring(index + tag.length + nextClosingTag + `</${operator}>`.length);
 					break;
 				case "for":
 					let template = body;
@@ -59,11 +59,33 @@ class Renderer {
 							result[names[i++]] = arg;
 						return result;
 					}
-					eval(`for (${statement.replace("model", "this.model")}) body += this.Render(iterateWith(template, variables.toValues(${variables.join(", ")})));`);
+					eval(`for (${statement.replace(/model/g, "this.model")}) body += this.Render(iterateWith(template, variables.toValues(${variables.join(", ")})));`);
 					html = html.substring(0, index) + body + html.substring(index + tag.length + nextClosingTag + `</${operator}>`.length);
 					break;
 				case "switch":
-
+					let switchResult = eval(statement.replace(/model./g, "this.model."));
+					let cases = body.substring(tag.length).split("<case ")
+					.map(c => ({
+						statement: c.split(">\r\n")[0],
+						body: c
+					}))
+					.map(c => ({
+						result: eval(c.statement.replace(/model./g, "this.model.")),
+						body: c.body.split(`${c.statement}>\r\n`)[1].split("</case>")[0],
+					}));
+					let solved = false;
+					for (let c of cases)
+						if (c.result == switchResult) {
+							solved = true;
+							html = html.substring(0, index) + c.body + html.substring(index + tag.length + nextClosingTag + `</${operator}>`.length);
+							break;
+						}
+					let defaultMatch = body.match(/<default>[\s\S]*<\/default>/g);
+					if (!solved)
+						if (defaultMatch != null)
+							html = html.substring(0, index) + defaultMatch[0].slice(9, -10) + html.substring(index + tag.length + nextClosingTag + `</${operator}>`.length);
+						else
+							html = html.substring(0, index) + html.substring(index + tag.length + nextClosingTag + `</${operator}>`.length);
 					break;
 				case "import":
 					let exports = Renderer.Import(statement);
