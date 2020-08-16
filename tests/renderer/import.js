@@ -5,6 +5,9 @@ const assert = chai.assert;
 const should = chai.should();
 
 const { Renderer } = require("../../utils/render");
+let utils = require("./utils");
+
+console.log(utils);
 
 module.exports = (() => {
 	describe("import/export tags", () => {
@@ -12,7 +15,7 @@ module.exports = (() => {
 			it(message, () => {
 				let input = fs.readFileSync(`${__dirname}/${inputFile}`).toString();
 				let output = fs.readFileSync(`${__dirname}/${outputFile}`).toString();
-				let renderer = new Renderer({});
+				let renderer = new Renderer({}, utils);
 				let renderedOutput = renderer.Render(input);
 				if (log)
 					console.log(renderedOutput);
