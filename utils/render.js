@@ -5,8 +5,13 @@ const { Iterator } = require("./iterator");
 const templateError = "Template not found!";
 
 class Renderer {
-	constructor(object) {
+	constructor(object, utils, useUrls = false) {
+		this.utils = Object.assign({}, utils);
+		delete this.utils.db;
 		this.model = object;
+		if (this.model.user)
+			delete this.model.user.password;
+		this.useUrls = useUrls;
 		this.pattern = {
 			openTag: /<(if|for|switch|import|export)\b(.*)>/,
 		}
@@ -88,7 +93,7 @@ class Renderer {
 							html = html.substring(0, index) + html.substring(index + tag.length + nextClosingTag + `</${operator}>`.length);
 					break;
 				case "import":
-					let exports = Renderer.Import(statement);
+					let exports = Renderer.Import(statement, this.utils, this.useUrls);
 					Object.keys(exports)
 					.forEach(e => body = body.replace(new RegExp(`<${e}>`, "g"), exports[e]));
 					html = html.substring(0, index) + body + html.substring(index + tag.length + nextClosingTag + `</${operator}>`.length);
@@ -96,23 +101,18 @@ class Renderer {
 				case "export":
 					html = html.substring(0, index) + body + html.substring(index + tag.length + nextClosingTag + `</${operator}>`.length);
 					break;
-					break;
 			}
 		}
 		for (let item of items)
 			html = html.replace(new RegExp("{{model." + item.name + "}}", "g"), item.value);
-		let spreads = html.match(/{{(\.\.\.model.*)}}/g);
-		if (spreads != null)
-			for (let sp of spreads)
-				html = html.replace(new RegExp(sp, "g"), JSON.stringify(eval(sp.replace(/model/g, "this.model").slice(5, -2))));
+		html = Renderer.Spreads(html, this.model);
 		return html;
 	}
 
-	static Import(statement) {
-		let target = path.join(__dirname + "/../public", statement.replace(/[\s\\\.\-]/g, "/")) + ".html";
-		if (!fs.existsSync(target))
+	static Import(statement, utils, useUrls) {
+		let content = utils.templates[useUrls ? "loadByUrl" : "load"](statement.slice(1));
+		if (content == null)
 			throw new Error(templateError);
-		let content = fs.readFileSync(target).toString();
 		let pairs = [];
 		let exports = {};
 		let total = content.match(/<export .*>/g).length;
@@ -126,6 +126,22 @@ class Renderer {
 			exports[name] = body;
 		});
 		return exports;
+	}
+
+	static Spreads(html, model) {
+		let spreads = html.match(/{{(\.\.\.model.*)}}/g);
+		if (spreads != null)
+			for (let sp of spreads)
+				try {
+					let spreaded = JSON.stringify(eval(sp.slice(5, -2)), null, "\t")
+					.replace(/\t"([.\w]*)": {/, "get $1() { return {")
+					.replace(/\t}/g, "}}");
+					spreaded = spreaded.replace(/\t"([.\w]*)": (.*)/g, "get $1() { return $2; },").replace(/,;/g, ";");
+					html = html.replace(new RegExp(sp, "g"), spreaded)
+				} catch (e) {
+					throw new Error(sp.slice(5, -2) + " is not defined!");
+				}
+		return html;
 	}
 
 	static Pair(tag, body) {
