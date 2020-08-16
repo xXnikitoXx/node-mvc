@@ -44,6 +44,9 @@ switch (args[0].toLowerCase()) {
 	case "view":
 		[ type, name, controller, request ] = args;
 		template = fs.readFileSync(`${__dirname}/templates/${type}.template.html`).toString();
+		template = template
+			.replace(/§name/g, name.replace(/\s/g, "_"))
+			.replace(/§description/g, description);
 		target = path.join(views, name + ".html");
 		if (fs.existsSync(target))
 			return logger.messages.builderError(`\tThis ${type} already exists!`);
