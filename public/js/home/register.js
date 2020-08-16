@@ -1,4 +1,4 @@
-const register = new Vue({
+register = new Vue({
     el: "#register",
     data() {
         return {

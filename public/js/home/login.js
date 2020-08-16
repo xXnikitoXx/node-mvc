@@ -1,4 +1,4 @@
-const login = new Vue({
+login = new Vue({
     el: "#login",
     data() {
         return {

@@ -1,4 +1,4 @@
-const navbar = new Vue({
+navbar = new Vue({
 	el: "#navbar",
 	data() {
 		return {
