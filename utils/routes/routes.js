@@ -1,4 +1,5 @@
 const fs = require("fs");
+const csurf = require("csurf");
 const { ErrorHandler, HandleError } = require("./../error");
 const { Logger } = require("./../logger");
 const { Renderer } = require("./../render");
@@ -14,7 +15,11 @@ const customRoutes = JSON.parse(fs.readFileSync(__dirname + "/../../data/customR
  * @param {any} utils
  */
 module.exports = (app, utils) => {
+	utils.templates.register("templates.generic.navbar");
+	utils.templates.register("templates.scripts.model");
+
 	utils.logger.messages.configuring("/", "GET");
+	utils.templates.register("home", [ "/" ]);
 	app.get("/", (req, res) => {
 		utils.logger.messages.request("/");
 		let user = false;
@@ -29,21 +34,24 @@ module.exports = (app, utils) => {
 			title: "Website",
 			lang: req.lang,
 			user: user,
-		});
+		}, utils);
 		res.send(renderer.Render(utils.public + "/home.html"));
     });
 
-	//utils.logger.messages.configuring("/import", "POST");
-	//app.post("/import")
-
 	for (let route in routes) {
 		utils.logger.messages.configuring(route, "GET");
+		utils.templates.register(routes[route], [ route ]);
 		app.get(route, (req, res) => {
 			utils.logger.messages.request(route);
-			res.sendFile(utils.public + "/" + routes[route]);
+			let renderer = new Renderer({
+				title: route[1].toUpperCase() + route.slice(2),
+				user: req.user,
+			}, utils);
+			res.send(renderer.Render(utils.public + "/" + routes[route]));
 		});
 	}
 
+	utils.templates.register("error", Object.keys(messages).map(k => "/" + k));
 	for (let message in messages) {
 		utils.logger.messages.configuring("/" + message, "GET");
 		app.get("/" + message, (req, res) => {
@@ -59,7 +67,7 @@ module.exports = (app, utils) => {
 	for (let route of customRoutes)
 		require(route)(app, utils);
 
-	app.use((err, req, res, next) => { HandleError(err, req, res); });
+	app.use((err, req, res, next) => { HandleError(err, req, res, utils); });
 	app.use((req, res, next) => {
 		if (!req.route) {
 			let errorCode = 404;

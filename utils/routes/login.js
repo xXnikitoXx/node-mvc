@@ -8,6 +8,7 @@ const { Renderer } = require("./../render");
  */
 module.exports = (app, utils) => {
 	utils.logger.messages.configuring("/login", "GET");
+	utils.templates.register("login", [ "/login" ]);
 	app.get("/login", utils.loginRedirect.forbidden, utils.csrfProtection, (req, res, next) => {
 		if (!utils.db) {
 			res.redirect("/404");
@@ -19,7 +20,7 @@ module.exports = (app, utils) => {
 			lang: req.lang,
 			csrfToken: req.csrfToken(),
 			error: ""
-		});
+		}, utils);
 		res.send(renderer.Render(utils.public + "/login.html"));
 	});
 
@@ -37,7 +38,7 @@ module.exports = (app, utils) => {
 					lang: req.lang,
 					csrfToken: req.csrfToken(),
 					error: "{{form.error}}"
-				});
+				}, utils);
 				res.send(renderer.Render(utils.public + "/login.html"));
 			};
 
@@ -62,6 +63,7 @@ module.exports = (app, utils) => {
 	});
 	
 	utils.logger.messages.configuring("/logout", "GET");
+	utils.templates.register("redirect", [ "/logout" ]);
 	app.get("/logout", utils.loginRedirect.required, (req, res) => {
 		if (!utils.db) {
 			res.redirect("/404");

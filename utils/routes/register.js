@@ -8,6 +8,7 @@ const { Renderer } = require("./../render");
  */
 module.exports = (app, utils) => {
 	utils.logger.messages.configuring("/register", "GET");
+	utils.templates.register("register", [ "/register" ]);
 	app.get("/register", utils.loginRedirect.forbidden, utils.csrfProtection, (req, res) => {
 		if (!utils.db) {
 			res.redirect("/404");
@@ -19,7 +20,7 @@ module.exports = (app, utils) => {
 			lang: req.lang,
 			csrfToken: req.csrfToken(),
 			error: "",
-		});
+		}, utils);
 		res.send(renderer.Render(utils.public + "/register.html"))
 	});
 
@@ -38,7 +39,7 @@ module.exports = (app, utils) => {
 				lang: req.lang,
 				csrfToken: req.csrfToken(),
 			};
-			let renderer = new Renderer(obj);
+			let renderer = new Renderer(obj, utils);
 			switch(err) {
 				case 0:
 					obj.error = "{{form.error.userExists}}";
