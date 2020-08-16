@@ -1,0 +1,17 @@
+<export default>
+	<script>
+		let model = {{...model}};
+	</script>
+</export>
+<export user>
+		<if model.user>
+			<script>
+				let user = {{...model.user}};
+			</script>
+		</if>
+		<if !model.user>
+			<script>
+				let user = false;
+			</script>
+		</if>
+</export>

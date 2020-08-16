@@ -10,47 +10,52 @@
 		<script src="js/jquery.js"></script>
 		<script src="materialize/js/materialize.js"></script>
 		<script src="js/vue.js"></script>
-		<if model.user>
-			<script>
-				const user = {{...model.user}};
-			</script>
-		</if>
-		<if !model.user>
-			<script>
-				const user = false;
-			</script>
-		</if>
+		<script type="module" src="js/pager/pager.js"></script>
+		<import templates.scripts.model>
+			<default>
+			<user>
+		</import>
 	</head>
 	<body>
-		<import templates.generic.navbar>
-			<default>
-			<script src="js/home/navbar.js"></script>
-		</import>
-		<div class="container">
-			<table>
-				<tbody>
-					<tr>
-						<td>Username:</td>
-						<td>{{model.user.username}}</td>
-					</tr>
-					<tr>
-						<td>Email:</td>
-						<td>{{model.user.email}}</td>
-					</tr>
-					<tr>
-						<td>First Name:</td>
-						<td>{{model.user.firstName}}</td>
-					</tr>
-					<tr>
-						<td>Middle Name:</td>
-						<td>{{model.user.middleName}}</td>
-					</tr>
-					<tr>
-						<td>Last Name:</td>
-						<td>{{model.user.lastName}}</td>
-					</tr>
-				</tbody>
-			</table>
-		</div>
+		<lock>
+			<import templates.generic.navbar>
+				<default>
+				<script src="js/home/navbar.js"></script>
+			</import>
+		</lock>
+		<export default>
+			<div class="container">
+				<table>
+					<tbody>
+						<tr>
+							<td>Username:</td>
+							<td>{{model.user.username}}</td>
+						</tr>
+						<tr>
+							<td>Email:</td>
+							<td>{{model.user.email}}</td>
+						</tr>
+						<tr>
+							<td>First Name:</td>
+							<td>{{model.user.firstName}}</td>
+						</tr>
+						<tr>
+							<td>Middle Name:</td>
+							<td>{{model.user.middleName}}</td>
+						</tr>
+						<tr>
+							<td>Last Name:</td>
+							<td>{{model.user.lastName}}</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<script>
+				for (let i = 0; i < navbar.leftTabs.length; i++)
+					navbar.leftTabs[i].active = false;
+				for (let i = 0; i < navbar.rightTabs.length; i++)
+					navbar.rightTabs[i].active = false;
+			</script>
+		</export>
 	</body>
 </html>

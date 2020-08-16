@@ -11,15 +11,19 @@
 		<script src="js/jQuery.js"></script>
 		<script src="materialize/js/materialize.js"></script>
 		<script src="js/vue.js"></script>
+		<script type="module" src="js/pager/pager.js"></script>
+		<import templates.scripts.model>
+			<default>
+			<user>
+		</import>
 	</head>
 	<body>
-		<import templates.generic.navbar>
-			<entry>
-			<script src="js/home/navbar.js"></script>
-			<script>
-				navbar.rightTabs[1].active = true;
-			</script>
-		</import>
+		<lock>
+			<import templates.generic.navbar>
+				<entry>
+				<script src="js/home/navbar.js"></script>
+			</import>
+		</lock>
 		<export default>
 			<div id="register" class="row">
 				<div class="col m4"></div>
@@ -99,7 +103,11 @@
 			</div>
 			<script src="js/home/register.js"></script>
 			<script>
-				register.form.csrfToken = "{{csrfToken}}";
+				for (let i = 0; i < navbar.leftTabs.length; i++)
+					navbar.leftTabs[i].active = false;
+				for (let i = 0; i < navbar.rightTabs.length; i++)
+					navbar.rightTabs[i].active = false;
+				navbar.rightTabs[1].active = true;
 			</script>
 		</export>
 	</body>

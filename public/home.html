@@ -10,27 +10,28 @@
 		<script src="js/jquery.js"></script>
 		<script src="materialize/js/materialize.js"></script>
 		<script src="js/vue.js"></script>
-		<if model.user>
-			<script>
-				const user = {{...model.user}};
-			</script>
-		</if>
-		<if !model.user>
-			<script>
-				const user = false;
-			</script>
-		</if>
+		<script type="module" src="js/pager/pager.js"></script>
+		<import templates.scripts.model>
+			<default>
+			<user>
+		</import>
 	</head>
 	<body>
-		<import templates.generic.navbar>
-			<default>
-			<script src="js/home/navbar.js"></script>
+		<lock>
+			<import templates.generic.navbar>
+				<default>
+				<script src="js/home/navbar.js"></script>
+			</import>
+		</lock>
+		<export default>
+			<h1>Welcome!</h1>
 			<script>
+				for (let i = 0; i < navbar.leftTabs.length; i++)
+					navbar.leftTabs[i].active = false;
+				for (let i = 0; i < navbar.rightTabs.length; i++)
+					navbar.rightTabs[i].active = false;
 				navbar.leftTabs[0].active = true;
 			</script>
-		</import>
-		<export default>
-			
 		</export>
 	</body>
 </html>
