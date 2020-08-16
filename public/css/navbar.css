@@ -39,7 +39,7 @@ body {
 .nav-wrapper ul .waves-effect {
 	height: 64px;
 	vertical-align: unset;
-	transition: all 1s ease-in-out;
+	transition: all .25s linear;
 	border-bottom: solid 0px white;
 }
 
