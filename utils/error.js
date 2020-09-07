@@ -12,18 +12,10 @@ class ErrorHandler extends Error {
 const HandleError = (err, req, res, utils) => {
 	let { statusCode, message } = err;
 	if (statusCode == undefined) statusCode = "Error!";
-	let user = false;
-	if (req.user)
-		user = {
-			username: req.user.username,
-			firstName: req.user.firstName,
-			lastName: req.user.lastName,
-			joinDate: req.user.joinDate,
-		};
 	let renderer = new Renderer({
 		title: "Website",
 		lang: req.lang,
-		user: user,
+		user: req.user,
 		statusCode,
 		message,
 	}, utils);

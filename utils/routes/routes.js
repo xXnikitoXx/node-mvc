@@ -16,6 +16,7 @@ const customRoutes = JSON.parse(fs.readFileSync(__dirname + "/../../data/customR
  */
 module.exports = (app, utils) => {
 	utils.templates.register("templates.generic.navbar");
+	utils.templates.register("templates.generic.footer");
 	utils.templates.register("templates.scripts.model");
 
 	utils.logger.messages.configuring("/", "GET");

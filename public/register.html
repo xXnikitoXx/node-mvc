@@ -24,91 +24,99 @@
 				<script src="js/home/navbar.js"></script>
 			</import>
 		</lock>
-		<export default>
-			<div id="register" class="row">
-				<div class="col m4"></div>
-				<div class="card col m4 grey darken-4 white-text">
-					<div class="card-title">
-						<h1 class="center-align">{{title}}</h1>
-						<h6 class="red-text center-align">{{model.error}}</h6>
-					</div>
-					<div class="card-content" style="padding-top: 0 !important;">
-						<form id="form" method="POST">
-							<div class="row">
-								<div class="input-field col s12">
-									<input id="username" name="username" type="text" class="validate white-text" data-length="30" minLength="4" required v-model="form.username">
-									<label for="username">{{usernameLabel}}</label>
+		<main>
+			<export default>
+				<div id="register" class="row">
+					<div class="col m4"></div>
+					<div class="card col m4 grey darken-4 white-text">
+						<div class="card-title">
+							<h1 class="center-align">{{title}}</h1>
+							<h6 class="red-text center-align">{{model.error}}</h6>
+						</div>
+						<div class="card-content" style="padding-top: 0 !important;">
+							<form id="form" method="POST">
+								<div class="row">
+									<div class="input-field col s12">
+										<input id="username" name="username" type="text" class="validate white-text" data-length="30" minLength="4" required v-model="form.username">
+										<label for="username">{{usernameLabel}}</label>
+									</div>
 								</div>
-							</div>
-							<div class="row">
-								<div class="input-field col s12">
-									<input id="email" name="email" type="text" class="validate white-text" required v-model="form.email">
-									<label for="email">{{emailLabel}}</label>
+								<div class="row">
+									<div class="input-field col s12">
+										<input id="email" name="email" type="text" class="validate white-text" required v-model="form.email">
+										<label for="email">{{emailLabel}}</label>
+									</div>
 								</div>
-							</div>
-							<div class="row">
-								<div class="input-field col s12">
-									<input id="password" name="password" type="password" class="validate white-text" data-length="50" minLength="6" required v-model="form.password">
-									<label for="password">{{passwordLabel}}</label>
+								<div class="row">
+									<div class="input-field col s12">
+										<input id="password" name="password" type="password" class="validate white-text" data-length="50" minLength="6" required v-model="form.password">
+										<label for="password">{{passwordLabel}}</label>
+									</div>
 								</div>
-							</div>
-							<div class="row">
-								<div class="input-field col s12">
-									<input id="confirmPassword" name="confirmPassword" type="password" class="validate white-text" :data-length="form.password.length" minLength="6" required v-model="form.confirmPassword">
-									<label for="confirmPassword">{{confirmPasswordLabel}}</label>
+								<div class="row">
+									<div class="input-field col s12">
+										<input id="confirmPassword" name="confirmPassword" type="password" class="validate white-text" :data-length="form.password.length" minLength="6" required v-model="form.confirmPassword">
+										<label for="confirmPassword">{{confirmPasswordLabel}}</label>
+									</div>
 								</div>
-							</div>
-							<div class="row">
-								<div class="input-field col s12">
-									<input id="firstName" name="firstName" type="text" class="validate white-text" data-length="30" required v-model="form.firstName">
-									<label for="firstName">{{firstNameLabel}}</label>
+								<div class="row">
+									<div class="input-field col s12">
+										<input id="firstName" name="firstName" type="text" class="validate white-text" data-length="30" required v-model="form.firstName">
+										<label for="firstName">{{firstNameLabel}}</label>
+									</div>
 								</div>
-							</div>
-							<div class="row">
-								<div class="input-field col s12">
-									<input id="lastName" name="lastName" type="text" class="validate white-text" data-length="30" required v-model="form.lastName">
-									<label for="lastName">{{lastNameLabel}}</label>
+								<div class="row">
+									<div class="input-field col s12">
+										<input id="lastName" name="lastName" type="text" class="validate white-text" data-length="30" required v-model="form.lastName">
+										<label for="lastName">{{lastNameLabel}}</label>
+									</div>
 								</div>
-							</div>
-							<input type="hidden" name="_csrf" value="{{model.csrfToken}}">
-							<div class="row">
-								<div class="col s12">
-									<label>
-										<input type="checkbox" class="filled-in" required v-model="form.agreement">
-										<span v-html="form.agreementText"></span>
-									</label>
+								<input type="hidden" name="_csrf" value="{{model.csrfToken}}">
+								<div class="row">
+									<div class="col s12">
+										<label>
+											<input type="checkbox" class="filled-in" required v-model="form.agreement">
+											<span v-html="form.agreementText"></span>
+										</label>
+									</div>
 								</div>
-							</div>
-							<div class="row">
-								<div class="col s12">
-									<label>
-										<input type="checkbox" class="filled-in" v-model="form.emailing">
-										<span v-html="form.emailingText"></span>
-									</label>
+								<div class="row">
+									<div class="col s12">
+										<label>
+											<input type="checkbox" class="filled-in" v-model="form.emailing">
+											<span v-html="form.emailingText"></span>
+										</label>
+									</div>
 								</div>
-							</div>
-							<div class="row">
-								<div class="col s4"></div>
-								<div class="col s4">
-									<button class="btn col s12" :class="{ disabled: !form.agreement }">{{register}}</button>
+								<div class="row">
+									<div class="col s4"></div>
+									<div class="col s4">
+										<button class="btn col s12" :class="{ disabled: !form.agreement }">{{register}}</button>
+									</div>
 								</div>
-							</div>
-						</form>
-					</div>
-					<div class="card-action center-align">
-						<a class="teal-text" href="javascript:history.back()">{{back}}</a>
-						<a class="teal-text" href="/">{{homepage}}</a>
+							</form>
+						</div>
+						<div class="card-action center-align">
+							<a class="teal-text" href="javascript:history.back()">{{back}}</a>
+							<a class="teal-text" href="/">{{homepage}}</a>
+						</div>
 					</div>
 				</div>
-			</div>
-			<script src="js/home/register.js"></script>
-			<script>
-				for (let i = 0; i < navbar.leftTabs.length; i++)
-					navbar.leftTabs[i].active = false;
-				for (let i = 0; i < navbar.rightTabs.length; i++)
-					navbar.rightTabs[i].active = false;
-				navbar.rightTabs[1].active = true;
-			</script>
-		</export>
+				<script src="js/home/register.js"></script>
+				<script>
+					for (let i = 0; i < navbar.leftTabs.length; i++)
+						navbar.leftTabs[i].active = false;
+					for (let i = 0; i < navbar.rightTabs.length; i++)
+						navbar.rightTabs[i].active = false;
+					navbar.rightTabs[1].active = true;
+				</script>
+			</export>
+		</main>
+		<lock>
+			<import templates.generic.footer>
+				<default>
+				<script src="js/home/footer.js"></script>
+			</import>
+		</lock>
 	</body>
 </html>

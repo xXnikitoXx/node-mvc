@@ -15,7 +15,7 @@ export class Unloader {
 
 	Update(selector = null) {
 		if (typeof(selector) == "string")
-			this.elements = [...document.querySelectorAll(`body > ${selector}:not(lock)`)];
+			this.elements = [...document.querySelectorAll(`body > main > ${selector}:not(lock)`)];
 		else
 			this.elements = selector;
 	}

@@ -23,15 +23,23 @@
 				<script src="js/home/navbar.js"></script>
 			</import>
 		</lock>
-		<export default>
-			<h1>Welcome!</h1>
-			<script>
-				for (let i = 0; i < navbar.leftTabs.length; i++)
-					navbar.leftTabs[i].active = false;
-				for (let i = 0; i < navbar.rightTabs.length; i++)
-					navbar.rightTabs[i].active = false;
-				navbar.leftTabs[0].active = true;
-			</script>
-		</export>
+		<main>
+			<export default>
+				<h1>Welcome!</h1>
+				<script>
+					for (let i = 0; i < navbar.leftTabs.length; i++)
+						navbar.leftTabs[i].active = false;
+					for (let i = 0; i < navbar.rightTabs.length; i++)
+						navbar.rightTabs[i].active = false;
+					navbar.leftTabs[0].active = true;
+				</script>
+			</export>
+		</main>
+		<lock>
+			<import templates.generic.footer>
+				<default>
+				<script src="js/home/footer.js"></script>
+			</import>
+		</lock>
 	</body>
 </html>

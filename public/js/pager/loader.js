@@ -45,8 +45,11 @@ export class Loader {
 						return window.location.href = data.slice(9);
 					let div = document.createElement("div");
 					div.innerHTML = data.trim();
-					[...div.childNodes].forEach(e => document.body.appendChild(e));
-					let elements = [...document.querySelectorAll("body > *:not(lock):not(script)")];
+					let main = document.querySelector("body > main");
+					main.style.transition = "";
+					main.style.opacity = "0";
+					[...div.childNodes].forEach(e => main.appendChild(e));
+					let elements = [...document.querySelectorAll("body > main > *:not(lock):not(script)")];
 					let scripts = [...document.querySelectorAll("*:not(head):not(lock) > script")];
 					setTimeout(() => {
 						scripts.forEach(script => {
@@ -59,8 +62,7 @@ export class Loader {
 						setTimeout(() => {
 							if (!popstate)
 								history.pushState({}, model.title, url);
-							//setTimeout(resolve, this.ApplyAnimation(elements, this.animation));
-							resolve();
+							setTimeout(resolve, this.ApplyAnimation([ main ], this.animation));
 						}, this.scriptLoadInterval);
 					}, 10);
 				});
@@ -85,10 +87,10 @@ export class Loader {
 			external: (url) => {
 				let script = document.createElement("script");
 				script.src = url;
-				document.body.appendChild(script);
+				document.querySelector("body > main").appendChild(script);
 			},
 			inline: (content) => {
-				eval(content);
+				(1, eval)(content);
 			}
 		}
 	}

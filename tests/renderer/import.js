@@ -7,8 +7,6 @@ const should = chai.should();
 const { Renderer } = require("../../utils/render");
 let utils = require("./utils");
 
-console.log(utils);
-
 module.exports = (() => {
 	describe("import/export tags", () => {
 		const test = (message, inputFile, outputFile, log = false) => {

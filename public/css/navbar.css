@@ -1,16 +1,23 @@
+body {
+	padding-top: 64px;
+	display: flex;
+	min-height: 100vh;
+	flex-direction: column;
+}
+
+main {
+	flex: 1 0 auto;
+}
+
 #navbar {
- 	position: fixed;
+	position: fixed;
 	top: 0;
 	width: 100%;
 	z-index: 1; 
 }
 
-body {
-	padding-top: 64px;
-}
-
 .nav-wrapper .brand-logo img {
-    height: 64px;
+	height: 64px;
 }
 
 .nav-wrapper .brand-logo {

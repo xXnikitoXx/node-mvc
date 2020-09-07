@@ -111,6 +111,8 @@ class Renderer {
 
 	static Import(statement, utils, useUrls) {
 		let content = utils.templates[useUrls ? "loadByUrl" : "load"](statement.slice(1));
+		if (content == null && useUrls)
+			content = utils.templates.load(statement.slice(1));
 		if (content == null)
 			throw new Error(templateError);
 		let pairs = [];

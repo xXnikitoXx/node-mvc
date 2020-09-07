@@ -12,7 +12,7 @@ After cloning type ```npm install``` to download all required packages.
 
 * **keep-alive** - Keeps the process running.
 > When giving arguments the process will execute the commands and then kill itself.\
-> To prevent this use ```npm start [args, args, args, ...] kepp-alive``` to continue running after the command execution.\
+> To prevent this use ```npm start [args, args, args, ...] keep-alive``` to continue running after the command execution.\
 > **This argument must be in the end of the command, otherwise it won't work!**
 
 * **create** - Create element.
