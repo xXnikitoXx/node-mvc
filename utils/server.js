@@ -1,7 +1,8 @@
 const fs = require("fs");
 const path = require("path");
 const express = require("express");
-const { Logger } = new require("./logger");
+const { Logger } = require("./logger");
+const { App } = require("./app");
 const { Injector } = require("./database/injector");
 const { AccountManager } = require("./services/accountManager");
 const { PermissionManager } = require("./services/permissionManager");
@@ -51,7 +52,7 @@ class Server {
 						process.exit();
 					}
 				}
-			this.app = express();
+			this.app = new App(express());
 			let utils = {
 				appSettings: this.appSettings,
 				dbSettings: this.dbSettings,
@@ -106,6 +107,7 @@ class Server {
 					return false;
 				}
 			};
+			this.app.utils = utils;
 			utils.accountManager = new AccountManager(utils);
 				utils.permissionManager = new PermissionManager(utils.accountManager, utils);
 			this.middleware = require("./middleware/middleware")(this.app, utils);
@@ -113,10 +115,10 @@ class Server {
 			this.injector = new Injector(utils);
 			this.port = port || 80;
 			this.securePort = securePort || 443;
-			this.httpServer = http.createServer(this.app).listen(this.port);
+			this.httpServer = http.createServer(this.app.instance).listen(this.port);
 			this.logger.messages.listening(this.port);
 			if (!this.appSettings.proxied) {
-				let httpsServer = https.createServer(this.sslCredentials, this.app);
+				let httpsServer = https.createServer(this.sslCredentials, this.app.instance);
 				httpsServer.listen(this.securePort);
 				this.logger.messages.listening(this.securePort);
 			}
