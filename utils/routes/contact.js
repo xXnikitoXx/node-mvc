@@ -7,15 +7,15 @@ const { Renderer } = require("./../render");
  * @param {any} utils
  */
 module.exports = (app, utils) => {
-	app.get("/terms", (req, res) => {
+	app.get("/terms", "Terms of Use", (req, res) => {
 
 	});
 
-	app.get("/privacy", (req, res) => {
+	app.get("/privacy", "Privacy Policy", (req, res) => {
 
     });
 
-	app.get("/contact", (req, res) => {
+	app.get("/contact", "Contact Us", (req, res) => {
 
 	});
 };

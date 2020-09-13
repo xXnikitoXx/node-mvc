@@ -2,35 +2,28 @@ const fs = require("fs");
 const path = require("path");
 
 module.exports = (utils) => {
-		return {
+	let templates = {
 		list: [],
-		register(path, urls = []) {
-			if (!this.load(path))
-			this.list.push({
-				id: path,
-				cache: null,
-				urls,
-			});
+		register(path, urls = [], title) {
+			if (!templates.load(path))
+				templates.list.push({
+					id: path,
+					cache: null,
+					urls,
+					title,
+				});
 		},
 		load(template, targetObject = false) {
-			let match = this.list.filter(t => t.id == template);
-			if (match.length > 0)
-				if (match[0].cache == null)
-					return (() => {
-						let target = path.join(utils.public, template.replace(/[\s\\\.\-]/g, "/")) + ".html";
-						if (fs.existsSync(target))
-							match[0].cache = fs.readFileSync(target).toString();
-						return targetObject ? match[0] : match[0].cache;
-					})();
-				else return targetObject ? match[0] : match[0].cache;
-			else return null;
+			return templates.loadMatch(templates.list.filter(t => t.id == template), template, targetObject);
 		},
 		loadByUrl(url, targetObject = false) {
-			let match = this.list.filter(t => t.urls.some(u => u == url));
+			return templates.loadMatch(templates.list.filter(t => t.urls.some(u => u == url)), null, targetObject);
+		},
+		loadMatch(match, template, targetObject = false) {
 			if (match.length > 0)
-				if (match[0].cache == null)
+				if (match[0].cache == null || ((utils.production && utils.appSettings.mvc.templates.cacheOnProduction) || ((!utils.production && utils.appSettings.mvc.templates.cacheOnDevelopment))))
 					return (() => {
-						let target = path.join(utils.public, match[0].id.replace(/[\s\\\.\-]/g, "/")) + ".html";
+						let target = path.join(utils.public, (template ? template : match[0].id).replace(/[\s\\\.\-]/g, "/")) + ".html";
 						if (fs.existsSync(target))
 							match[0].cache = fs.readFileSync(target).toString();
 						return targetObject ? match[0] : match[0].cache;
@@ -39,10 +32,25 @@ module.exports = (utils) => {
 			else return null;
 		},
 		isRedirect(url) {
-			let template = this.loadByUrl(url, true);
+			let template = templates.loadByUrl(url, true);
 			if (template)
 				return template.id == "redirect";
 			return false;
 		}
 	};
+	if (utils.appSettings.mvc.templates.automaticRegistration) {
+		const registerFrom = (directory) => {
+			try {
+				let fullPath = path.join(utils.public, directory);
+				let entities = fs.readdirSync(fullPath);
+				entities.filter(e => e.endsWith(".html"))
+				.map(e => (directory + "/" + e.slice(0, -5)).replace(/[\\\/]/g, "."))
+				.forEach(t => templates.register(t));
+				entities.filter(e => !e.endsWith(".html"))
+				.forEach(d => registerFrom(directory + "/" + d));
+			} catch (e) {}
+		};
+		registerFrom("templates");
+	}
+	return templates;
 };

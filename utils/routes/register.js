@@ -7,7 +7,7 @@ const { Renderer } = require("./../render");
  * @param {any} utils
  */
 module.exports = (app, utils) => {
-	app.get("/register", utils.loginRedirect.forbidden, utils.csrfProtection, (req, res) => {
+	app.get("/register", "Register", utils.loginRedirect.forbidden, utils.csrfProtection, (req, res) => {
 		if (!utils.db) {
 			res.redirect("/404");
 			return;

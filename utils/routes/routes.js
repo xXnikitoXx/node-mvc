@@ -15,12 +15,8 @@ const customRoutes = JSON.parse(fs.readFileSync(__dirname + "/../../data/customR
  * @param {any} utils
  */
 module.exports = (app, utils) => {
-	utils.templates.register("templates.generic.navbar");
-	utils.templates.register("templates.generic.footer");
-	utils.templates.register("templates.scripts.model");
-
 	utils.logger.messages.configuring("/", "GET");
-	utils.templates.register("home", [ "/" ]);
+	utils.templates.register("home", [ "/" ], "Home");
 	app.instance.get("/", (req, res) => {
 		utils.logger.messages.request("/");
 		let user = false;
@@ -32,7 +28,7 @@ module.exports = (app, utils) => {
 				joinDate: req.user.joinDate,
 			};
 		let renderer = new Renderer({
-			title: "Website",
+			title: "Home",
 			lang: req.lang,
 			user: user,
 		}, utils);
@@ -52,7 +48,7 @@ module.exports = (app, utils) => {
 		});
 	}
 
-	utils.templates.register("error", Object.keys(messages).map(k => "/" + k));
+	utils.templates.register("error", Object.keys(messages).map(k => "/" + k), "Error");
 	for (let message in messages) {
 		utils.logger.messages.configuring("/" + message, "GET");
 		app.instance.get("/" + message, (req, res) => {

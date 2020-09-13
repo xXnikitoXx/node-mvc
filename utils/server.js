@@ -53,7 +53,9 @@ class Server {
 					}
 				}
 			this.app = new App(express());
+			let production = this.production;
 			let utils = {
+				get production() { return production; },
 				appSettings: this.appSettings,
 				dbSettings: this.dbSettings,
 				logger: this.logger,
@@ -64,7 +66,7 @@ class Server {
 				routes: path.join(__dirname + "/../routes"),
 				enums: path.join(__dirname + "/../enums"),
 			};
-			utils.templates = require("./templates");
+			utils.templates = require("./templates")(utils);
 			this.app.utils = utils;
 			utils.accountManager = new AccountManager(utils);
 			utils.permissionManager = new PermissionManager(utils.accountManager, utils);

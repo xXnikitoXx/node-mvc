@@ -7,7 +7,7 @@ const { Renderer } = require("./../render");
  * @param {any} utils
  */
 module.exports = (app, utils) => {
-	app.get("/profile", utils.loginRedirect.required, (req, res) => {
+	app.get("/profile", "Profile", utils.loginRedirect.required, (req, res) => {
 		let renderer = new Renderer({
 			title: "Profile",
 			user: req.user,

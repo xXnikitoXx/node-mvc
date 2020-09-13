@@ -60,6 +60,7 @@ export class Loader {
 							script.remove();
 						});
 						setTimeout(() => {
+							document.title = model.title || document.title;
 							if (!popstate)
 								history.pushState({}, model.title, url);
 							setTimeout(resolve, this.ApplyAnimation([ main ], this.animation));

@@ -18,12 +18,18 @@ class App {
 	updateMethods() {
 		for (let method of App.methods)
 			this[method] = function() {
+				let skip = 1;
 				let url = arguments[0];
+				let title = undefined;
+				if (typeof(arguments[1]) == "string") {
+					title = arguments[1];
+					skip++;
+				}
 				let template = (url.startsWith("/") ? url.slice(1) : url).replace(/\//g, ".");
 				if (method == "get")
-					this.utils.templates.register(template, [ url ]);
+					this.utils.templates.register(template, [ url ], title);
 				this.utils.logger.messages.configuring(url, method.toUpperCase());
-				let args = [ url, (req, res, next) => { this.utils.logger.messages.request(url); next(); } ].concat([...arguments].slice(1));
+				let args = [ url, (req, res, next) => { this.utils.logger.messages.request(url); next(); } ].concat([...arguments].slice(skip));
 				this.instance[method].apply(this.instance, args);
 			}
 	}
