@@ -7,7 +7,11 @@ window.pager = {
 	scriptLoadTime: 50,
 	applyClickEvent: () => {
 		let elements = [...document.querySelectorAll("a")]
-		.filter(e => e.hasAttribute("href"));
+		.filter(e =>
+			e.hasAttribute("href") &&
+			!window.pager.ignored(e.getAttribute("href")) &&
+			e.getAttribute("target") != "_blank"
+		);
 		elements.forEach(e => {
 			e.addEventListener("click", (event) => {
 				window.pager.visit(e.getAttribute("href"));
@@ -33,6 +37,13 @@ window.pager = {
 			});
 		});
 	},
+	ignored(link) {
+		let segments = [ "#", "file:", "ftp:", "mailto:", "tel:", "news:", "nntp:", "telnet:", "gopher:", ];
+		for (let segment of segments)
+			if (link.includes(segment))
+				return true;
+		return false;
+	}
 };
 
 window.onpopstate = (event) => {
