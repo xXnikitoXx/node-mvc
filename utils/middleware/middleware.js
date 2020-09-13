@@ -71,7 +71,9 @@ module.exports = (app, utils) => {
 				`*.fontawesome.com`,
 			],
 			"img": [
-				`*`
+				`*`,
+				`'self'`,
+				`data:`
 			],
 			"media": [
 				`*`

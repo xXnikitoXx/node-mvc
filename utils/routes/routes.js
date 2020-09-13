@@ -21,7 +21,7 @@ module.exports = (app, utils) => {
 
 	utils.logger.messages.configuring("/", "GET");
 	utils.templates.register("home", [ "/" ]);
-	app.get("/", (req, res) => {
+	app.instance.get("/", (req, res) => {
 		utils.logger.messages.request("/");
 		let user = false;
 		if (req.user)
@@ -42,7 +42,7 @@ module.exports = (app, utils) => {
 	for (let route in routes) {
 		utils.logger.messages.configuring(route, "GET");
 		utils.templates.register(routes[route], [ route ]);
-		app.get(route, (req, res) => {
+		app.instance.get(route, (req, res) => {
 			utils.logger.messages.request(route);
 			let renderer = new Renderer({
 				title: route[1].toUpperCase() + route.slice(2),
@@ -55,7 +55,7 @@ module.exports = (app, utils) => {
 	utils.templates.register("error", Object.keys(messages).map(k => "/" + k));
 	for (let message in messages) {
 		utils.logger.messages.configuring("/" + message, "GET");
-		app.get("/" + message, (req, res) => {
+		app.instance.get("/" + message, (req, res) => {
 			utils.logger.messages.request("/" + message);
 			let errorCode = Number(message);
 			throw new ErrorHandler(errorCode, messages[message]);
@@ -68,8 +68,8 @@ module.exports = (app, utils) => {
 	for (let route of customRoutes)
 		require(route)(app, utils);
 
-	app.use((err, req, res, next) => { HandleError(err, req, res, utils); });
-	app.use((req, res, next) => {
+	app.instance.use((err, req, res, next) => { HandleError(err, req, res, utils); });
+	app.instance.use((req, res, next) => {
 		if (!req.route) {
 			let errorCode = 404;
 			res.redirect("/" + errorCode);

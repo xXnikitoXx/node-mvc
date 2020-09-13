@@ -7,14 +7,11 @@ const { Renderer } = require("./../render");
  * @param {any} utils
  */
 module.exports = (app, utils) => {
-	utils.logger.messages.configuring("/login", "GET");
-	utils.templates.register("login", [ "/login" ]);
 	app.get("/login", utils.loginRedirect.forbidden, utils.csrfProtection, (req, res, next) => {
 		if (!utils.db) {
 			res.redirect("/404");
 			return;
 		}
-		utils.logger.messages.request("/login");
 		let renderer = new Renderer({
 			title: "Login",
 			lang: req.lang,
@@ -24,13 +21,11 @@ module.exports = (app, utils) => {
 		res.send(renderer.Render(utils.public + "/login.html"));
 	});
 
-	utils.logger.messages.configuring("/login", "POST");
 	app.post("/login", utils.loginRedirect.forbidden, utils.csrfProtection, (req, res, next) => {
 		if (!utils.db) {
 			res.redirect("/404");
 			return;
 		}
-		utils.logger.messages.request("/login");
 		utils.passport.authenticate("local", (err, user, info) => {
 			const errorResponse = () => {
 				let renderer = new Renderer({
@@ -62,8 +57,6 @@ module.exports = (app, utils) => {
 		})(req, res, next);
 	});
 	
-	utils.logger.messages.configuring("/logout", "GET");
-	utils.templates.register("redirect", [ "/logout" ]);
 	app.get("/logout", utils.loginRedirect.required, (req, res) => {
 		if (!utils.db) {
 			res.redirect("/404");

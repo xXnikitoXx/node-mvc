@@ -8,7 +8,6 @@ const { request } = require("express");
  * @param {any} utils
  */
 module.exports = (app, utils) => {
-	utils.logger.messages.configuring("/import", "POST");
 	app.post("/import", (req, res, next) => {
 		utils.csrfProtection(req, res, () => {
 			if (utils.templates.isRedirect(req.body.template)) {
