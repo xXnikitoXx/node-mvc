@@ -58,7 +58,7 @@ module.exports = (app, utils) => {
 			// "web-share 'none'",
 			// "xr-spatial-tracking 'none'",
 		];
-		res.setHeader("Feature-Policy", features.join("; "));
+		res.setHeader("Permissions-Policy", features.join("; "));
 		let csp = {
 			"default": [
 				`'self'`,
