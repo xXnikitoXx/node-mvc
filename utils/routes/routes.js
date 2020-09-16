@@ -5,7 +5,7 @@ const { Logger } = require("./../logger");
 const { Renderer } = require("./../render");
 const routes = JSON.parse(fs.readFileSync(__dirname + "/../../data/routes.json"));
 const messages = JSON.parse(fs.readFileSync(__dirname + "/../../data/messages.json"));
-const routeFiles = fs.readdirSync(__dirname).filter(route => route != "routes.js").map(route => "./" + route.split(".js")[0]);
+const routeFiles = fs.readdirSync(__dirname).filter(route => route != "routes.js" && route != "controller.js").map(route => "./" + route.split(".js")[0]);
 const customRoutes = JSON.parse(fs.readFileSync(__dirname + "/../../data/customRoutes.json"));
 
 /**
