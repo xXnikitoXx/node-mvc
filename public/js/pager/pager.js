@@ -9,8 +9,8 @@ window.pager = {
 		let elements = [...document.querySelectorAll("a")]
 		.filter(e =>
 			e.hasAttribute("href") &&
-			!window.pager.ignored(e.getAttribute("href")) &&
-			e.getAttribute("target") != "_blank"
+			!e.hasAttribute("target") &&
+			!window.pager.ignored(e.getAttribute("href"))
 		);
 		elements.forEach(e => {
 			e.addEventListener("click", (event) => {
