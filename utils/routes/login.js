@@ -1,68 +1,71 @@
-const { Renderer } = require("./../render");
+const { Controller } = require("./controller");
 
 /**
  * Initializes login routes.
- * @function
  * @param {Express.Application} app
  * @param {any} utils
  */
-module.exports = (app, utils) => {
-	app.get("/login", "Login", utils.loginRedirect.forbidden, utils.csrfProtection, (req, res, next) => {
-		if (!utils.db) {
-			res.redirect("/404");
-			return;
-		}
-		let renderer = new Renderer({
-			title: "Login",
-			lang: req.lang,
-			csrfToken: req.csrfToken(),
-			error: ""
-		}, utils);
-		res.send(renderer.Render(utils.public + "/login.html"));
-	});
+class Login extends Controller {
+	DescribeRoutes() {
+		this.prefix = "/login";
 
-	app.post("/login", utils.loginRedirect.forbidden, utils.csrfProtection, (req, res, next) => {
-		if (!utils.db) {
-			res.redirect("/404");
-			return;
-		}
-		utils.passport.authenticate("local", (err, user, info) => {
-			const errorResponse = () => {
-				let renderer = new Renderer({
-					title: "Login",
-					lang: req.lang,
-					csrfToken: req.csrfToken(),
-					error: "{{form.error}}"
-				}, utils);
-				res.send(renderer.Render(utils.public + "/login.html"));
-			};
+		this.LoginGetRoute = "";
+		this.LoginGetMiddleware = [
+			this.utils.loginRedirect.forbidden,
+			this.utils.csrfProtection,
+		];
 
-			if (err != null) {
-				errorResponse();
-				return;
-			}
+		this.LoginPostRoute = "";
+		this.LoginPostMethod = "POST";
+		this.LoginPostMiddleware = [
+			this.utils.loginRedirect.forbidden,
+			this.utils.csrfProtection,
+		];
 
-			req.logIn(user, function(err) {
-				if (err) {
-					errorResponse();
-					return;
-				}
+		this.LogoutRoute = "/logout";
+		this.LogoutMiddleware = [ this.utils.loginRedirect.required, ];
+	}
 
-				let remember = req.body["remember"] != undefined;
-				if (remember)
-					req.session.cookie.expires = false;
+	async LoginGet(req) {
+		if (!this.utils.db)
+			return this.Redirect("/404");
+		this.model.csrfToken = req.csrfToken();
+		this.model.error = "";
+		return this.View();
+	}
 
-				res.redirect("/");
-			});
-		})(req, res, next);
-	});
-	
-	app.get("/logout", utils.loginRedirect.required, (req, res) => {
-		if (!utils.db) {
-			res.redirect("/404");
-			return;
-		}
+	async LoginPost(req, res, next) {
+		if (!this.utils.db)
+			return this.Redirect("/404");
+		let controller = this;
+		return await new Promise((resolve, reject) => {
+			this.utils.passport.authenticate("local", (err, user, info) => {
+				const errorResponse = () => {
+					return resolve(controller.View({
+						csrfToken: req.csrfToken(),
+						error: "{{form.error}}",
+					}));
+				};
+				if (err != null)
+					return resolve(errorResponse());
+				req.logIn(user, function(err) {
+					if (err)
+						return resolve(errorResponse());
+					let remember = req.body["remember"] != undefined;
+					if (remember)
+						req.session.cookie.expires = false;
+					resolve(controller.Redirect());
+				});
+			})(req, res, next);
+		});
+	}
+
+	async Logout(req) {
+		if (!this.utils.db)
+			return this.Redirect("/404");
 		req.logout();
-		res.redirect("/");
-	});
-};
+		return this.Redirect();
+	}
+}
+
+module.exports = (app, utils) => new Login(app, utils);

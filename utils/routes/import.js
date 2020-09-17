@@ -1,5 +1,4 @@
 const { Renderer } = require("./../render");
-const { request } = require("express");
 
 /**
  * The HTTP variant of importing HTML modules from templates.

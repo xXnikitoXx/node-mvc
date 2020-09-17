@@ -1,4 +1,4 @@
-const { Renderer } = require("./../render");
+const { Controller } = require("./controller");
 
 /**
  * Initializes Terms of Use, Privacy Policy and Contact routes.
@@ -6,16 +6,22 @@ const { Renderer } = require("./../render");
  * @param {Express.Application} app
  * @param {any} utils
  */
-module.exports = (app, utils) => {
-	app.get("/terms", "Terms of Use", (req, res) => {
+class Contact extends Controller {
+	DescribeRoutes() {
+		this.prefix = "";
+	}
 
-	});
+	async Terms() {
+		return this.View();
+	}
 
-	app.get("/privacy", "Privacy Policy", (req, res) => {
+	async Privacy() {
+		return this.View();
+	}
 
-    });
+	async Contact() {
+		return this.View();
+	}
+}
 
-	app.get("/contact", "Contact Us", (req, res) => {
-
-	});
-};
+module.exports = (app, utils) => new Contact(app, utils);

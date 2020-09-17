@@ -1,17 +1,48 @@
-const { Renderer } = require("./../render");
+const { Controller } = require("./controller");
 
 /**
- * undefined
+ * Initializes profile routes.
  * @function
  * @param {Express.Application} app
  * @param {any} utils
  */
-module.exports = (app, utils) => {
-	app.get("/profile", "Profile", utils.loginRedirect.required, (req, res) => {
-		let renderer = new Renderer({
-			title: "Profile",
-			user: req.user,
-		}, utils);
-		res.send(renderer.Render(utils.public + "/profile.html"));
-	});
-};
+class Profile extends Controller {
+	DescribeRoutes() {
+		this.prefix = "/profile";
+
+		this.IndexGetRoute = "";
+		this.IndexGetMiddleware = [
+			this.utils.loginRedirect.required,
+			this.utils.csrfProtection,
+		];
+
+		this.IndexPostRoute = "";
+		this.IndexPostMethod = "POST";
+		this.IndexPostMiddleware = [
+			this.utils.loginRedirect.required,
+			this.utils.csrfProtection,
+		];
+	}
+
+	async IndexGet(req) {
+		this.model.user = req.user;
+		return this.View();
+	}
+
+	async IndexPost(req) {
+		this.model.user = req.user;
+		let user = {
+			...this.model.user,
+			...req.body,
+		};
+		this.model.status = "success";
+		try {
+			await this.utils.accountManager.UpdateUser(user);
+		} catch (err) {
+			this.model.status = "error";
+		}
+		return this.View();
+	}
+}
+
+module.exports = (app, utils) => new Profile(app, utils);
