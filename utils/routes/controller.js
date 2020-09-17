@@ -6,6 +6,8 @@ class Controller {
 	constructor(app, utils) {
 		this._isInitialized = false;
 		this._sendStatus = false;
+		this._redirect = false;
+		this._redirectPath = "/";
 		this.renderer = {};
 		this.model = {};
 		this.prefix = "";
@@ -13,9 +15,11 @@ class Controller {
 		this.utils = utils;
 		this.DescribeRoutes();
 		this._init();
+		this.constructor.Finalize = this.Finalize;
 		this.constructor.View = this.View;
 		this.constructor.JSON = this.JSON;
 		this.constructor.Status = this.Status;
+		this.constructor.Redirect = this.Redirect;
 	}
 
 	get model() {
@@ -51,7 +55,7 @@ class Controller {
 			this._isInitialized = true;
 	}
 
-	_init(app, utils) {
+	_init() {
 		let blacklist = [ "constructor", "DescribeRoutes" ];
 		let whitelist = [ "Route", "Method", "Title", "Middleware", "Callback" ];
 		let prototypeDefinitions = Object.entries(Object.getOwnPropertyDescriptors(this.__proto__)).map(e => [ e[0], e[1].value ]);
@@ -79,17 +83,34 @@ class Controller {
 				description.Route,
 				description.Title,
 				...description.Middleware,
-				(req, res) => {
-					this.model = { title: description.Title, lang: req.lang || undefined },
-					this._sendStatus = false;
-					this._targetView = this.utils.public + description.Route + ".html";
-					this._viewExists = fs.existsSync(this._targetView);
-					let response = description.Callback.apply(this, req);
-					if (typeof(response) == "number" && !this._sendStatus)
-						response = response.toString();
-					res[this._sendStatus ? "sendStatus" : "send"](response);
+				(req, res, next) => {
+					new Promise(async (resolve, reject) => {
+						this.model = { title: description.Title, lang: req.lang || undefined },
+						this._response = undefined;
+						this._redirect = false;
+						this._redirectPath = "/";
+						this._sendStatus = false;
+						this._targetView = this.utils.public + description.Route + ".html";
+						this._viewExists = fs.existsSync(this._targetView);
+						let result = await description.Callback.apply(this, [ req, res, next ]);
+						resolve(result);
+					})
+					.then(response => {
+						if (this._redirect)
+							return res.redirect(this._redirectPath || "/");
+						if (response == undefined || response == null)
+							response = this._response;
+						if (typeof(response) == "number" && !this._sendStatus)
+							response = response.toString();
+						res[this._sendStatus ? "sendStatus" : "send"](response);
+					});
 				},
 			]);
+	}
+
+	Finalize(response) {
+		this._response = response;
+		return this._response;
 	}
 
 	View() {
@@ -104,6 +125,8 @@ class Controller {
 		}
 		if (this._viewExists)
 			return this.renderer.Render(this._targetView);
+		if (target == "")
+			return this.Redirect("/404");
 		return this.renderer.Render(target);
 	}
 
@@ -118,6 +141,11 @@ class Controller {
 	Status(code) {
 		this._sendStatus = true;
 		return Number(code);
+	}
+
+	Redirect(path) {
+		this._redirect = true;
+		return this._redirectPath = path || "/";
 	}
 }
 
