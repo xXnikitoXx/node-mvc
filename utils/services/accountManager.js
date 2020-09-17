@@ -80,6 +80,28 @@ class AccountManager {
 		});
 	}
 
+	UpdateUser(user) {
+		return new Promise((resolve, reject) => {
+			let users = this.utils.db.Collection("users");
+			users.findOne({ id: user.id })
+			.then(dbUser => {
+				if (dbUser == null) {
+					users.insertOne(user)
+					.then(data => { resolve(user); })
+					.catch(reject);
+				} else {
+					users.updateOne({ id: dbUser.id }, { $set: user })
+					.then(data => { resolve(user); })
+					.catch(reject);
+				}
+			})
+			.catch(err => {
+				this.utils.logger.messages.dbError(err);
+				reject(err);
+			});
+		});
+	}
+
 	Find(filter) {
 		if (!this.utils.db)
 			return;
