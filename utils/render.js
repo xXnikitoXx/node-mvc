@@ -23,7 +23,7 @@ class Renderer {
 	 * @param {String} html 
 	 * @returns {String}
 	 */
-	Render(html) {
+	Render(html, req) {
 		html = html.toString();
 		if (!html.includes("<") && !html.includes(">"))
 			if (fs.existsSync(html))
@@ -51,11 +51,15 @@ class Renderer {
 							for (let l in result)
 								if (result[l].match(/<(if|for|switch|case)(.*)>/) != null)
 									result[l] = result[l].replace(new RegExp(`\\b(${v})\\b`, "g"), values[v]);
+							let properties = new Iterator(values[v]).ListItems();
 							result = result.join("\n").replace(new RegExp(`{{${v}}}`, "g"), values[v]);
+							for (let property of properties)
+								result = result.replace(new RegExp(`{{${v}.${property.name}}}`, "g"), property.value);
+							result = Renderer.Spreads(result, values[v], v);
 						}
 						return result;
 					}
-					let variables = statement.split("let ")[1].split("=")[0].replace(/[\[\]]/g, "").replace(" ", "").split(",");
+					let variables = statement.split("let ")[1].split(statement.includes(" of ") ? " of " : statement.includes(" in ") ? " in " : "=")[0].replace(/[\[\]]/g, "").replace(" ", "").split(",");
 					variables.toValues = function() {
 						let result = {};
 						let names = this;
@@ -64,7 +68,7 @@ class Renderer {
 							result[names[i++]] = arg;
 						return result;
 					}
-					eval(`for (${statement.replace(/model/g, "this.model")}) body += this.Render(iterateWith(template, variables.toValues(${variables.join(", ")})));`);
+					eval(`for (${statement.replace(/model/g, "this.model")}) body += this.Render(iterateWith(template, variables.toValues(${variables.join(", ")})), req);`);
 					html = html.substring(0, index) + body + html.substring(index + tag.length + nextClosingTag + `</${operator}>`.length);
 					break;
 				case "switch":
@@ -94,6 +98,7 @@ class Renderer {
 					break;
 				case "import":
 					let exports = Renderer.Import(statement, this.utils, this.useUrls);
+					body = this.Render(body, req);
 					Object.keys(exports)
 					.forEach(e => body = body.replace(new RegExp(`<${e}>`, "g"), exports[e]));
 					html = html.substring(0, index) + body + html.substring(index + tag.length + nextClosingTag + `</${operator}>`.length);
@@ -104,7 +109,8 @@ class Renderer {
 			}
 		}
 		for (let item of items)
-			html = html.replace(new RegExp("{{model." + item.name + "}}", "g"), item.value);
+			html = html.replace(new RegExp("{{model." + item.name + "}}", "g"), item.value)
+				.replace(new RegExp("~/", "g"), req.hostname);
 		html = Renderer.Spreads(html, this.model);
 		return html;
 	}
@@ -130,19 +136,20 @@ class Renderer {
 		return exports;
 	}
 
-	static Spreads(html, model) {
-		let spreads = html.match(/{{(\.\.\.model.*)}}/g);
-		if (spreads != null)
+	static Spreads(html, model, name = "model") {
+		let spreads = html.match(new RegExp(`{{(\.\.\.${name}.*)}}`, "g"));
+		if (spreads != null) {
 			for (let sp of spreads)
 				try {
-					let spreaded = JSON.stringify(eval(sp.slice(5, -2)), null, "\t")
+					let spreaded = JSON.stringify(eval(sp.replace(new RegExp(`{{...${name}}}`, "g"), "{{...model}}").slice(5, -2)), null, "\t")
 					.replace(/\t"([.\w]*)": {/, "get $1() { return {")
 					.replace(/\t}/g, "}}");
 					spreaded = spreaded.replace(/\t"([.\w]*)": (.*)/g, "get $1() { return $2; },").replace(/,;/g, ";");
-					html = html.replace(new RegExp(sp, "g"), spreaded)
+					html = html.replace(new RegExp(sp, "g"), spreaded);
 				} catch (e) {
 					throw new Error(sp.slice(5, -2) + " is not defined!");
 				}
+		}
 		return html;
 	}
 
