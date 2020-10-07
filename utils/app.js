@@ -25,7 +25,15 @@ class App {
 					title = arguments[1];
 					skip++;
 				}
-				let template = (url.startsWith("/") ? url.slice(1) : url).replace(/\//g, ".");
+				let template;
+				template = (url.startsWith("/") ? url.slice(1) : url).replace(/\//g, ".");
+				if (template.length == 0)
+					template = "home";
+				if (typeof(arguments[2]) == "boolean") {
+					if (!arguments[2])
+						template = "redirect";
+					skip++;
+				}
 				if (method == "get")
 					this.utils.templates.register(template, [ url ], title);
 				this.utils.logger.messages.configuring(url, method.toUpperCase());
