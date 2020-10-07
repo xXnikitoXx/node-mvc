@@ -46,8 +46,7 @@ utils.templates = {
 	}
 };
 
-utils.templates.register("templates.generic.navbar");
-utils.templates.register("templates.scripts.model");
+utils.templates.register("templates.test.test");
 utils.templates.register("home", [ "/" ]);
 utils.templates.register("login", [ "/login" ]);
 utils.templates.register("register", [ "/register" ]);

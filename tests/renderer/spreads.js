@@ -14,7 +14,7 @@ module.exports = (() => {
 				let input = fs.readFileSync(`${__dirname}/${inputFile}`).toString();
 				let output = fs.readFileSync(`${__dirname}/${outputFile}`).toString();
 				let renderer = new Renderer(inputObject, utils);
-				let renderedOutput = renderer.Render(input).replace(/\r\n/g, "\n").replace(/\n/g, "\r\n");
+				let renderedOutput = renderer.Render(input, { hostname: "localhost" }).replace(/\r\n/g, "\n").replace(/\n/g, "\r\n");
 				if (log)
 					console.log(renderedOutput);
 				expect(renderedOutput).to.equal(output);

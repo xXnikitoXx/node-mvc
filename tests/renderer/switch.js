@@ -13,7 +13,7 @@ module.exports = (() => {
 				let input = fs.readFileSync(`${__dirname}/${inputFile}`).toString();
 				let output = fs.readFileSync(`${__dirname}/${outputFile}`).toString();
 				let renderer = new Renderer({});
-				let renderedOutput = renderer.Render(input);
+				let renderedOutput = renderer.Render(input, { hostname: "localhost" });
 				if (log)
 					console.log(renderedOutput);
 				expect(renderedOutput).to.equal(output);
