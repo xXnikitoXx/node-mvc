@@ -14,7 +14,7 @@ module.exports = (() => {
 				let input = fs.readFileSync(`${__dirname}/${inputFile}`).toString();
 				let output = fs.readFileSync(`${__dirname}/${outputFile}`).toString();
 				let renderer = new Renderer({}, utils);
-				let renderedOutput = renderer.Render(input);
+				let renderedOutput = renderer.Render(input, { hostname: "localhost" });
 				if (log)
 					console.log(renderedOutput);
 				expect(renderedOutput).to.equal(output);
@@ -23,5 +23,6 @@ module.exports = (() => {
 
 		test("imports the default segment from template file", "import_1_input.html", "import_1_output.html");
 		test("imports the right segment of template with multiple exports", "import_2_input.html", "import_2_output.html");
+		test("works with nested imports", "import_3_input.html", "import_3_output.html");
 	});
 })();
