@@ -8,7 +8,7 @@ const { Renderer } = require("./../render");
  */
 module.exports = (app, utils) => {
 	let logging = utils.appSettings.mvc.templates.dynamicLoaderLogs;
-	utils.logger.messages.configuring("import", "POST");
+	utils.logger.messages.configuring("/import", "POST");
 	app.instance.post("/import", (req, res, next) => {
 		if (logging.native && logging.target)
 			utils.logger.messages.request("/import -> " + req.body.template);
@@ -31,7 +31,7 @@ module.exports = (app, utils) => {
 				req.body.model.title = template ? template.title : req.body.model.title;
 				let renderer = new Renderer(req.body.model, utils, true);
 				req.url = req.body.template;
-				res.send(renderer.Render(req.body.template));
+				res.send(renderer.Render(req.body.template, req));
 			}
 		})
 	});

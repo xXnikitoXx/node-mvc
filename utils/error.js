@@ -19,7 +19,7 @@ const HandleError = (err, req, res, utils) => {
 		statusCode,
 		message,
 	}, utils);
-	res.send(renderer.Render(fs.readFileSync(__dirname + "/../public/error.html")));
+	res.send(renderer.Render(fs.readFileSync(__dirname + "/../public/error.html"), req));
 };
 
 module.exports = {

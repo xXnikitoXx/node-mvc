@@ -15,26 +15,6 @@ const customRoutes = JSON.parse(fs.readFileSync(__dirname + "/../../data/customR
  * @param {any} utils
  */
 module.exports = (app, utils) => {
-	utils.logger.messages.configuring("/", "GET");
-	utils.templates.register("home", [ "/" ], "Home");
-	app.instance.get("/", (req, res) => {
-		utils.logger.messages.request("/");
-		let user = false;
-		if (req.user)
-			user = {
-				username: req.user.username,
-				firstName: req.user.firstName,
-				lastName: req.user.lastName,
-				joinDate: req.user.joinDate,
-			};
-		let renderer = new Renderer({
-			title: "Home",
-			lang: req.lang,
-			user: user,
-		}, utils);
-		res.send(renderer.Render(utils.public + "/home.html"));
-    });
-
 	for (let route in routes) {
 		utils.logger.messages.configuring(route, "GET");
 		utils.templates.register(routes[route], [ route ]);
@@ -44,7 +24,7 @@ module.exports = (app, utils) => {
 				title: route[1].toUpperCase() + route.slice(2),
 				user: req.user,
 			}, utils);
-			res.send(renderer.Render(utils.public + "/" + routes[route]));
+			res.send(renderer.Render(utils.public + "/" + routes[route], req));
 		});
 	}
 
