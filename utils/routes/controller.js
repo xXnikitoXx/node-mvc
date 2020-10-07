@@ -57,7 +57,7 @@ class Controller {
 
 	_init() {
 		let blacklist = [ "constructor", "DescribeRoutes" ];
-		let whitelist = [ "Route", "Method", "Title", "Middleware", "Callback" ];
+		let whitelist = [ "Route", "Method", "Dynamic", "Title", "Middleware", "Callback" ];
 		let prototypeDefinitions = Object.entries(Object.getOwnPropertyDescriptors(this.__proto__)).map(e => [ e[0], e[1].value ]);
 		let definitions = Object.entries(Object.getOwnPropertyDescriptors(this)).map(e => [ e[0], e[1].value ]);
 		let methodDefinitions = prototypeDefinitions.filter(e => e[1] != undefined && !blacklist.includes(e[0]));
@@ -66,6 +66,7 @@ class Controller {
 			this.methods[definition[0]] = {
 				Route: this.prefix + "/" + definition[0].replace(/_/g, "/").toLowerCase(),
 				Method: "GET",
+				Dynamic: true,
 				Title: definition[0],
 				Middleware: [],
 				Callback: definition[1],
@@ -82,10 +83,12 @@ class Controller {
 			this.app[description.Method.toLowerCase()].apply(this.app, [
 				description.Route,
 				description.Title,
+				description.Dynamic,
 				...description.Middleware,
 				(req, res, next) => {
 					new Promise(async (resolve, reject) => {
 						this.model = { title: description.Title, lang: req.lang || undefined },
+						this._req = req;
 						this._response = undefined;
 						this._redirect = false;
 						this._redirectPath = "/";
@@ -118,16 +121,17 @@ class Controller {
 		if (arguments.length > 0) {
 			if (typeof(arguments[0]) == "object")
 				this.model = arguments[0];
-			else if (arguments.length > 2) {
-				target = arguments[0];
-				this.model = arguments[1];
+			else {
+				target = `${this.utils.public}/${arguments[0]}.html`;
+				if (arguments.length > 2)
+					this.model = arguments[1];
 			}
 		}
 		if (this._viewExists)
-			return this.renderer.Render(this._targetView);
+			return this.renderer.Render(this._targetView, this._req);
 		if (target == "")
 			return this.Redirect("/404");
-		return this.renderer.Render(target);
+		return this.renderer.Render(target, this._req);
 	}
 
 	JSON() {
