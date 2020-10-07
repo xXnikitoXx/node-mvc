@@ -11,7 +11,7 @@ class §name extends Controller {
 		this.IndexRoute = "";
 	}
 
-	Index(req) {
+	async Index(req) {
 		return this.View();
 	}
 }
