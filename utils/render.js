@@ -144,7 +144,7 @@ class Renderer {
 					let spreaded = JSON.stringify(eval(sp.replace(new RegExp(`{{...${name}}}`, "g"), "{{...model}}").slice(5, -2)), null, "\t")
 					.replace(/\t"([.\w]*)": {/, "get $1() { return {")
 					.replace(/\t}/g, "}}");
-					spreaded = spreaded.replace(/\t"([.\w]*)": (.*)/g, "get $1() { return $2; },").replace(/,;/g, ";");
+					spreaded = spreaded.replace(/\t"([.\w]*)": (.*)/g, "get $1() { return $2; },").replace(/,;/g, ";").replace(/\[; },(.*?)}}[\s\S]*\]/gs, "[$1}]}");
 					html = html.replace(new RegExp(sp, "g"), spreaded);
 				} catch (e) {
 					throw new Error(sp.slice(5, -2) + " is not defined!");
