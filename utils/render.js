@@ -50,7 +50,7 @@ class Renderer {
 							result = result.split("\n");
 							for (let l in result)
 								if (result[l].match(/<(if|for|switch|case)(.*)>/) != null)
-									result[l] = result[l].replace(new RegExp(`\\b(${v})\\b`, "g"), values[v]);
+									result[l] = result[l].replace(new RegExp(`\\b(${v})\\b`, "g"), `(${JSON.stringify(values[v])})`);
 							let properties = new Iterator(values[v]).ListItems();
 							result = result.join("\n").replace(new RegExp(`{{${v}}}`, "g"), values[v]);
 							for (let property of properties)
