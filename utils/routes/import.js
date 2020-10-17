@@ -31,7 +31,13 @@ module.exports = (app, utils) => {
 				req.body.model.title = template ? template.title : req.body.model.title;
 				let renderer = new Renderer(req.body.model, utils, true);
 				req.url = req.body.template;
-				res.send(renderer.Render(req.body.template, req));
+				let result = "redirect /404";
+				try {
+					result = renderer.Render(req.body.template, req);
+					res.send(result);
+				} catch {
+					res.send(result);
+				}
 			}
 		})
 	});

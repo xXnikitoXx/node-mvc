@@ -44,11 +44,11 @@ class Server {
 				try {
 					this.dbConnect = require("./database/database");
 					this.db = await this.dbConnect;
-					db.EnsureCreated();
+					this.db.EnsureCreated();
 				} catch {
 					if (this.appSettings.databaseRequired) {
-						this.logger.message.dbRequired();
-						this.logger.message.stopping();
+						this.logger.messages.dbRequired();
+						this.logger.messages.stopping();
 						process.exit();
 					}
 				}
