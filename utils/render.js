@@ -42,6 +42,16 @@ class Renderer {
 					html = html.substring(0, index) + (ifResult ? body : "") + html.substring(index + tag.length + nextClosingTag + `</${operator}>`.length);
 					break;
 				case "for":
+					if (body.includes("<import")) {
+						let innerMatch = body.match(/<(import)\b(.*)>/);
+						let innerIndex = innerMatch.index;
+						let [ innerTag, innerOperator, innerStatement ] = innerMatch;
+						let innerBody = body.substring(innerIndex + innerTag.length);
+						let nextInnerClosingTag = Renderer.Pair(innerOperator, innerBody);
+						innerBody = innerBody.substring(0, nextInnerClosingTag);
+						innerBody = Renderer.RenderImport(this, innerBody, req, innerStatement, this.utils, this.useUrls);
+						body = body.substring(0, innerIndex) + innerBody + body.substring(innerIndex + innerTag.length + nextInnerClosingTag + `</${innerOperator}>`.length);
+					}
 					let template = body;
 					body = "";
 					function iterateWith(str, values) {
@@ -97,10 +107,7 @@ class Renderer {
 							html = html.substring(0, index) + html.substring(index + tag.length + nextClosingTag + `</${operator}>`.length);
 					break;
 				case "import":
-					let exports = Renderer.Import(statement, this.utils, this.useUrls);
-					body = this.Render(body, req);
-					Object.keys(exports)
-					.forEach(e => body = body.replace(new RegExp(`<${e}>`, "g"), exports[e]));
+					body = Renderer.RenderImport(this, body, req, statement, this.utils, this.useUrls);
 					html = html.substring(0, index) + body + html.substring(index + tag.length + nextClosingTag + `</${operator}>`.length);
 					break;
 				case "export":
@@ -113,6 +120,14 @@ class Renderer {
 				.replace(new RegExp("~/", "g"), req.hostname);
 		html = Renderer.Spreads(html, this.model);
 		return html;
+	}
+
+	static RenderImport(instance, body, req, statement, utils, useUrls) {
+		let exports = Renderer.Import(statement, utils, useUrls);
+		body = instance.Render(body, req);
+		Object.keys(exports)
+		.forEach(e => body = body.replace(new RegExp(`<${e}>`, "g"), exports[e]));
+		return body;
 	}
 
 	static Import(statement, utils, useUrls) {
