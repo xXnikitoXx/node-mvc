@@ -116,7 +116,7 @@ class Controller {
 		return this._response;
 	}
 
-	View() {
+	async View() {
 		let target = "";
 		if (arguments.length > 0) {
 			if (typeof(arguments[0]) == "object")
@@ -128,13 +128,13 @@ class Controller {
 			}
 		}
 		if (this._viewExists)
-			return this.renderer.Render(this._targetView, this._req);
+			return await this.renderer.Render(this._targetView, this._req);
 		if (target == "")
 			return this.Redirect("/404");
-		return this.renderer.Render(target, this._req);
+		return await this.renderer.Render(target, this._req);
 	}
 
-	JSON() {
+	async JSON() {
 		if (arguments.length == 0)
 			return this.model;
 		else if (arguments.length == 1)
@@ -142,12 +142,12 @@ class Controller {
 		return [...arguments];
 	}
 
-	Status(code) {
+	async Status(code) {
 		this._sendStatus = true;
 		return Number(code);
 	}
 
-	Redirect(path) {
+	async Redirect(path) {
 		this._redirect = true;
 		return this._redirectPath = path || "/";
 	}

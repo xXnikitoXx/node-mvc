@@ -13,7 +13,7 @@ class Renderer {
 			delete this.model.user.password;
 		this.useUrls = useUrls;
 		this.pattern = {
-			openTag: /<(if|for|switch|import|export)\b(.*)>/,
+			openTag: /<(if|for|switch|import|export|request)\b(.*)>/,
 		}
 	}
 
@@ -23,7 +23,7 @@ class Renderer {
 	 * @param {String} html 
 	 * @returns {String}
 	 */
-	Render(html, req) {
+	async Render(html, req) {
 		html = html.toString();
 		if (!html.includes("<") && !html.includes(">"))
 			if (fs.existsSync(html))
@@ -78,7 +78,10 @@ class Renderer {
 							result[names[i++]] = arg;
 						return result;
 					}
-					eval(`for (${statement.replace(/model/g, "this.model")}) body += this.Render(iterateWith(template, variables.toValues(${variables.join(", ")})), req);`);
+					eval(`(async function() {
+						for (${statement.replace(/model/g, "this.model")})
+							body += await this.Render(iterateWith(template, variables.toValues(${variables.join(", ")})), req);
+					})()`);
 					html = html.substring(0, index) + body + html.substring(index + tag.length + nextClosingTag + `</${operator}>`.length);
 					break;
 				case "switch":
@@ -107,12 +110,41 @@ class Renderer {
 							html = html.substring(0, index) + html.substring(index + tag.length + nextClosingTag + `</${operator}>`.length);
 					break;
 				case "import":
-					body = Renderer.RenderImport(this, body, req, statement, this.utils, this.useUrls);
+					body = await Renderer.RenderImport(this, body, req, statement, this.utils, this.useUrls);
 					html = html.substring(0, index) + body + html.substring(index + tag.length + nextClosingTag + `</${operator}>`.length);
 					break;
 				case "export":
 					html = html.substring(0, index) + body + html.substring(index + tag.length + nextClosingTag + `</${operator}>`.length);
 					break;
+				case "request":
+					let [ type, url ] = operator.split().filter(s => s.length > 0);
+					type = type.toLowerCase();
+					let headers = [];
+					if (body.includes("<headers>") && body.includes("</headers>"))
+						headers = body.split("<headers>")[1]
+							.split("</headers>")[0]
+							.replace(/\r\n/g, "\n")
+							.split("\n")
+							.filter(h => s.length > 0);
+					let error = "";
+					if (body.includes("<error>") && body.includes("</error>"))
+						error = await this.Render(body.split("<error>")[1].split("</error>")[0], req);
+					try {
+						let response = await utils.httpManager[type](url, headers);
+						if (body.includes("<response>") && body.includes("</response>")) {
+							body = body.split("<response>")[1].split("</response>")[0];
+							if (body.includes("<json>"))
+								body = body.replace(/<json>/g, await response.json());
+							if (body.includes("<text>"))
+								body = body.replace(/<text>/g, await response.text())
+						}
+						html = html.substring(0, index) + body + html.substring(index + tag.length + nextClosingTag + `</${operator}>`.length);
+					} catch (e) {
+						html = html.substring(0, index) +
+							(await this.Render(error.replace(/{{message}}/g, e.toString()), req)) +
+							html.substring(index + tag.length + nextClosingTag + `</${operator}>`.length);
+					}
+				break;
 			}
 		}
 		for (let item of items)
@@ -122,9 +154,9 @@ class Renderer {
 		return html;
 	}
 
-	static RenderImport(instance, body, req, statement, utils, useUrls) {
+	static async RenderImport(instance, body, req, statement, utils, useUrls) {
 		let exports = Renderer.Import(statement, utils, useUrls);
-		body = instance.Render(body, req);
+		body = await instance.Render(body, req);
 		Object.keys(exports)
 		.forEach(e => body = body.replace(new RegExp(`<${e}>`, "g"), exports[e]));
 		return body;
