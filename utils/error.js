@@ -9,7 +9,7 @@ class ErrorHandler extends Error {
 	}
 }
 
-const HandleError = (err, req, res, utils) => {
+const HandleError = async (err, req, res, utils) => {
 	let { statusCode, message } = err;
 	if (statusCode == undefined) statusCode = "Error!";
 	let renderer = new Renderer({
@@ -19,7 +19,7 @@ const HandleError = (err, req, res, utils) => {
 		statusCode,
 		message,
 	}, utils);
-	res.send(renderer.Render(fs.readFileSync(__dirname + "/../public/error.html"), req));
+	res.send(await renderer.Render(fs.readFileSync(__dirname + "/../public/error.html"), req));
 };
 
 module.exports = {

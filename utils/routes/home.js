@@ -7,7 +7,7 @@ class Home extends Controller {
 	}
 
 	async Index() {
-		return this.View("home");
+		return await this.View("home");
 	}
 }
 

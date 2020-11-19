@@ -12,15 +12,15 @@ class Contact extends Controller {
 	}
 
 	async Terms() {
-		return this.View();
+		return await this.View();
 	}
 
 	async Privacy() {
-		return this.View();
+		return await this.View();
 	}
 
 	async Contact() {
-		return this.View();
+		return await this.View();
 	}
 }
 

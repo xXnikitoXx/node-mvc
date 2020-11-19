@@ -32,12 +32,9 @@ module.exports = (app, utils) => {
 				let renderer = new Renderer(req.body.model, utils, true);
 				req.url = req.body.template;
 				let result = "redirect /404";
-				try {
-					result = renderer.Render(req.body.template, req);
-					res.send(result);
-				} catch {
-					res.send(result);
-				}
+				new Promise(async (resolve) => resolve(await renderer.Render(req.body.template, req)))
+				.then(result => res.send(result))
+				.catch(() => res.send(result));
 			}
 		})
 	});

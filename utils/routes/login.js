@@ -9,12 +9,14 @@ class Login extends Controller {
 	DescribeRoutes() {
 		this.prefix = "/login";
 
+		this.LoginGetTitle = "Login";
 		this.LoginGetRoute = "";
 		this.LoginGetMiddleware = [
 			this.utils.loginRedirect.forbidden,
 			this.utils.csrfProtection,
 		];
 
+		this.LoginPostTitle = "Login";
 		this.LoginPostRoute = "";
 		this.LoginPostMethod = "POST";
 		this.LoginPostMiddleware = [
@@ -31,30 +33,30 @@ class Login extends Controller {
 			return this.Redirect("/404");
 		this.model.csrfToken = req.csrfToken();
 		this.model.error = "";
-		return this.View();
+		return await this.View();
 	}
 
 	async LoginPost(req, res, next) {
 		if (!this.utils.db)
-			return this.Redirect("/404");
+			return await this.Redirect("/404");
 		let controller = this;
-		return await new Promise((resolve, reject) => {
+		return await new Promise(async (resolve, reject) => {
 			this.utils.passport.authenticate("local", (err, user, info) => {
-				const errorResponse = () => {
-					return resolve(controller.View({
+				const errorResponse = async () => {
+					return resolve(await controller.View({
 						csrfToken: req.csrfToken(),
 						error: "{{form.error}}",
 					}));
 				};
 				if (err != null)
-					return resolve(errorResponse());
+					return new Promise(async () => resolve(await errorResponse())).then();
 				req.logIn(user, function(err) {
 					if (err)
-						return resolve(errorResponse());
+						return new Promise(async () => resolve(await errorResponse())).then();
 					let remember = req.body["remember"] != undefined;
 					if (remember)
 						req.session.cookie.expires = false;
-					resolve(controller.Redirect());
+					new Promise(async () => resolve(await controller.Redirect()));
 				});
 			})(req, res, next);
 		});
@@ -62,9 +64,9 @@ class Login extends Controller {
 
 	async Logout(req) {
 		if (!this.utils.db)
-			return this.Redirect("/404");
+			return await this.Redirect("/404");
 		req.logout();
-		return this.Redirect();
+		return await this.Redirect();
 	}
 }
 

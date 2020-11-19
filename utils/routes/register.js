@@ -9,12 +9,14 @@ class Register extends Controller {
 	DescribeRoutes() {
 		this.prefix = "/register";
 
+		this.RegisterGetTitle = "Register";
 		this.RegisterGetRoute = "";
 		this.RegisterGetMiddleware = [
 			this.utils.loginRedirect.forbidden,
 			this.utils.csrfProtection,
 		];
 
+		this.RegisterPostTitle = "Register";
 		this.RegisterPostRoute = "";
 		this.RegisterPostMethod = "POST";
 		this.RegisterPostMiddleware = [
@@ -25,18 +27,18 @@ class Register extends Controller {
 
 	async RegisterGet(req) {
 		if (!this.utils.db)
-			return this.Redirect("/404");
+			return await this.Redirect("/404");
 		this.model.csrfToken = req.csrfToken();
 		this.model.error = "";
-		return this.View();
+		return await this.View();
 	}
 
 	async RegisterPost(req) {
 		if (!this.utils.db)
-			return this.Redirect("/404");
+			return await this.Redirect("/404");
 		try {
 			await this.utils.accountManager.Register(req.body);
-			return this.Finalize(this.Redirect("/login"))
+			return await this.Finalize(await this.Redirect("/login"))
 		} catch (err) {
 			this.model.csrfToken = req.csrfToken();
 			switch(err) {
@@ -59,7 +61,7 @@ class Register extends Controller {
 					this.model.error = "{{form.error.unknown}}";
 					break;
 			}
-			return this.View();
+			return await this.View();
 		}
 	}
 }

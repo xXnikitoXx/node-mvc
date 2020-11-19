@@ -12,7 +12,7 @@ class §name extends Controller {
 	}
 
 	async Index(req) {
-		return this.View();
+		return await this.View();
 	}
 }
 

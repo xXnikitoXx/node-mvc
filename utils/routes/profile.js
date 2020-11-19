@@ -26,7 +26,7 @@ class Profile extends Controller {
 
 	async IndexGet(req) {
 		this.model.user = req.user;
-		return this.View();
+		return await this.View();
 	}
 
 	async IndexPost(req) {
@@ -41,7 +41,7 @@ class Profile extends Controller {
 		} catch (err) {
 			this.model.status = "error";
 		}
-		return this.View();
+		return await this.View();
 	}
 }
 
