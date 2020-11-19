@@ -10,11 +10,11 @@ let utils = require("./utils");
 module.exports = (() => {
 	describe("spread syntax", () => {
 		const test = (message, inputObject, inputFile, outputFile, log = false) => {
-			it(message, () => {
+			it(message, async () => {
 				let input = fs.readFileSync(`${__dirname}/${inputFile}`).toString();
 				let output = fs.readFileSync(`${__dirname}/${outputFile}`).toString();
 				let renderer = new Renderer(inputObject, utils);
-				let renderedOutput = renderer.Render(input, { hostname: "localhost" }).replace(/\r\n/g, "\n").replace(/\n/g, "\r\n");
+				let renderedOutput = (await renderer.Render(input, { hostname: "localhost" })).replace(/\r\n/g, "\n").replace(/\n/g, "\r\n");
 				if (log)
 					console.log(renderedOutput);
 				expect(renderedOutput).to.equal(output);

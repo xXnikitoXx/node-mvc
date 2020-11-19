@@ -78,10 +78,10 @@ class Renderer {
 							result[names[i++]] = arg;
 						return result;
 					}
-					eval(`(async function() {
+					await (eval(`async () => {
 						for (${statement.replace(/model/g, "this.model")})
 							body += await this.Render(iterateWith(template, variables.toValues(${variables.join(", ")})), req);
-					})()`);
+					}`))();
 					html = html.substring(0, index) + body + html.substring(index + tag.length + nextClosingTag + `</${operator}>`.length);
 					break;
 				case "switch":

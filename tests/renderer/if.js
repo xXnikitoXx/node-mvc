@@ -9,11 +9,11 @@ const { Renderer } = require("./../../utils/render");
 module.exports = (() => {
 	describe("if tag", () => {
 		const test = (message, inputFile, outputFile, log = false) => {
-			it(message, () => {
+			it(message, async () => {
 				let input = fs.readFileSync(`${__dirname}/${inputFile}`).toString();
 				let output = fs.readFileSync(`${__dirname}/${outputFile}`).toString();
 				let renderer = new Renderer({});
-				let renderedOutput = renderer.Render(input, { hostname: "localhost" });
+				let renderedOutput = await renderer.Render(input, { hostname: "localhost" });
 				if (log)
 					console.log(renderedOutput);
 				expect(renderedOutput).to.equal(output);

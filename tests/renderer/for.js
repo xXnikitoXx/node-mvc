@@ -9,7 +9,7 @@ const { Renderer } = require("./../../utils/render");
 module.exports = (() => {
 	describe("for tag", () => {
 		const test = (message, inputFile, outputFile, log = false) => {
-			it(message, () => {
+			it(message, async () => {
 				let input = fs.readFileSync(`${__dirname}/${inputFile}`).toString();
 				let output = fs.readFileSync(`${__dirname}/${outputFile}`).toString();
 				let renderer = new Renderer({
@@ -19,7 +19,7 @@ module.exports = (() => {
 						{ name: "Anna", age: 12, },
 					],
 				});
-				let renderedOutput = renderer.Render(input, { hostname: "localhost" }).replace(/\r\n/g, "\n").replace(/\n/g, "\r\n");
+				let renderedOutput = (await renderer.Render(input, { hostname: "localhost" })).replace(/\r\n/g, "\n").replace(/\n/g, "\r\n");
 				if (log)
 					console.log(renderedOutput);
 				expect(renderedOutput).to.equal(output);

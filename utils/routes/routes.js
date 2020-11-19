@@ -44,7 +44,7 @@ module.exports = (app, utils) => {
 	for (let route of customRoutes)
 		require(route)(app, utils);
 
-	app.instance.use((err, req, res, next) => new Promise(async () => await HandleError(err, req, res, utils)).tnen());
+	app.instance.use((err, req, res, next) => new Promise(async () => await HandleError(err, req, res, utils)).then());
 	app.instance.use((req, res, next) => {
 		if (!req.route) {
 			let errorCode = 404;
