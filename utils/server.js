@@ -6,6 +6,7 @@ const { App } = require("./app");
 const { Injector } = require("./database/injector");
 const { AccountManager } = require("./services/accountManager");
 const { PermissionManager } = require("./services/permissionManager");
+const { HttpManager } = require("./services/httpManager");
 const http = require("http");
 const https = require("https");
 
@@ -70,6 +71,7 @@ class Server {
 			this.app.utils = utils;
 			utils.accountManager = new AccountManager(utils);
 			utils.permissionManager = new PermissionManager(utils.accountManager, utils);
+			utils.httpManager = new HttpManager();
 			this.middleware = require("./middleware/middleware")(this.app, utils);
 			require("./routes/routes")(this.app, utils);
 			this.injector = new Injector(utils);
