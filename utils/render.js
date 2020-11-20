@@ -130,13 +130,20 @@ class Renderer {
 					if (body.includes("<error>") && body.includes("</error>"))
 						error = await this.Render(body.split("<error>")[1].split("</error>")[0], req);
 					try {
-						let response = await utils.httpManager[type](url, headers);
+						let hasBody = [ "GET", "HEAD", "DELETE", "OPTIONS" ].includes(type);
+						let data = hasBody ? (
+								body.includes("<data>") && body.includes("</data>") ?
+								JSON.parse(body.split("<data>")[1].split("</data>")[0]) : {}
+							) : undefined;
+						let response = await utils.httpManager[type](url, hasBody ? data : headers, hasBody ? headers : undefined);
 						if (body.includes("<response>") && body.includes("</response>")) {
 							body = body.split("<response>")[1].split("</response>")[0];
+							body = body.replace(/<status>/g, response.status)
+								.replace(/<statusText>/g, response.statusText);
 							if (body.includes("<json>"))
 								body = body.replace(/<json>/g, await response.json());
 							if (body.includes("<text>"))
-								body = body.replace(/<text>/g, await response.text())
+								body = body.replace(/<text>/g, await response.text());
 						}
 						html = html.substring(0, index) + body + html.substring(index + tag.length + nextClosingTag + `</${operator}>`.length);
 					} catch (e) {
