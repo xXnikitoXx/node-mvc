@@ -117,8 +117,9 @@ class Renderer {
 					html = html.substring(0, index) + body + html.substring(index + tag.length + nextClosingTag + `</${operator}>`.length);
 					break;
 				case "request":
-					let [ type, url ] = operator.split().filter(s => s.length > 0);
+					let [ type, url ] = statement.split(" ").filter(s => s.length > 0);
 					type = type.toLowerCase();
+					url = url.replace(/~\//g, req.hostname.replace("localhost", "http://localhost") + "/");
 					let headers = [];
 					if (body.includes("<headers>") && body.includes("</headers>"))
 						headers = body.split("<headers>")[1]
@@ -130,12 +131,12 @@ class Renderer {
 					if (body.includes("<error>") && body.includes("</error>"))
 						error = await this.Render(body.split("<error>")[1].split("</error>")[0], req);
 					try {
-						let hasBody = [ "GET", "HEAD", "DELETE", "OPTIONS" ].includes(type);
+						let hasBody = [ "get", "head", "delete", "options" ].includes(type);
 						let data = hasBody ? (
 								body.includes("<data>") && body.includes("</data>") ?
 								JSON.parse(body.split("<data>")[1].split("</data>")[0]) : {}
 							) : undefined;
-						let response = await utils.httpManager[type](url, hasBody ? data : headers, hasBody ? headers : undefined);
+						let response = await this.utils.httpManager[type](url, hasBody ? data : headers, hasBody ? headers : undefined);
 						if (body.includes("<response>") && body.includes("</response>")) {
 							body = body.split("<response>")[1].split("</response>")[0];
 							body = body.replace(/<status>/g, response.status)
