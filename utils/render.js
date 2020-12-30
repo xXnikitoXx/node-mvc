@@ -110,6 +110,8 @@ class Renderer {
 							html = html.substring(0, index) + html.substring(index + tag.length + nextClosingTag + `</${operator}>`.length);
 					break;
 				case "import":
+					for (let item of items)
+						statement = statement.replace(new RegExp("{{model." + item.name + "}}", "g"), item.value);
 					body = await Renderer.RenderImport(this, body, req, statement, this.utils, this.useUrls);
 					html = html.substring(0, index) + body + html.substring(index + tag.length + nextClosingTag + `</${operator}>`.length);
 					break;
