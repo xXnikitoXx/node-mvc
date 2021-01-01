@@ -6,8 +6,7 @@
 	"scripts": {
 		"start": "node index",
 		"test": "mocha tests",
-		"create": "node ./builder/create",
-		"remove": "node ./builder/remove"
+		"cli": "node ./cli/cli"
 	},
 	"author": "xXnikitoXx",
 	"license": "ISC",
@@ -29,7 +28,7 @@
 		"node-fetch": "^2.6.1",
 		"passport": "^0.4.1",
 		"passport-local": "^1.0.0",
-		"readline": "^1.3.0",
+		"readline-sync": "^1.4.10",
 		"sha256": "^0.2.0",
 		"socket.io": "^2.3.0"
 	}
