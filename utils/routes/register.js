@@ -7,6 +7,8 @@ const { Controller } = require("./controller");
  */
 class Register extends Controller {
 	DescribeRoutes() {
+		this.Inject("accountManager");
+
 		this.prefix = "/register";
 
 		this.RegisterGetTitle = "Register";
@@ -37,9 +39,10 @@ class Register extends Controller {
 		if (!this.utils.db)
 			return await this.Redirect("/404");
 		try {
-			await this.utils.accountManager.Register(req.body);
+			await this.accountManager.Register(req.body);
 			return await this.Finalize(await this.Redirect("/login"))
 		} catch (err) {
+			console.log(err);
 			this.model.csrfToken = req.csrfToken();
 			switch(err) {
 				case 0:

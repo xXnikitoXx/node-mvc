@@ -8,6 +8,8 @@ const { Controller } = require("./controller");
  */
 class Profile extends Controller {
 	DescribeRoutes() {
+		this.Inject("accountManager");
+
 		this.prefix = "/profile";
 
 		this.IndexGetRoute = "";
@@ -37,7 +39,7 @@ class Profile extends Controller {
 		};
 		this.model.status = "success";
 		try {
-			await this.utils.accountManager.UpdateUser(user);
+			await this.accountManager.UpdateUser(user);
 		} catch (err) {
 			this.model.status = "error";
 		}
