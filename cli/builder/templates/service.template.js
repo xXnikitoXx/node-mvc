@@ -21,4 +21,4 @@ class §name {
 	}
 }
 
-module.exports = { AccountManager };
+module.exports = { §name };
