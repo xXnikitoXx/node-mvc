@@ -21,6 +21,7 @@ module.exports = (app, utils) => {
 				res.send("redirect " + req.body.template);
 			}
 			else {
+				req.body.template = req.body.template.split("?")[0];
 				let template = utils.templates.loadByUrl(req.body.template, true);
 				req.body.template = `${template ?
 					template.cache.split(`<export ${utils.appSettings.mvc.templates.defaultTarget}>`)[1].split("</export>")[0] :
