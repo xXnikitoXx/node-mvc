@@ -4,6 +4,7 @@ const express = require("express");
 const { Logger } = require("./logger");
 const { App } = require("./app");
 const { Injector } = require("./database/injector");
+const { ServiceOrganizer } = require("./services/services");
 const { AccountManager } = require("./services/accountManager");
 const { PermissionManager } = require("./services/permissionManager");
 const { HttpManager } = require("./services/httpManager");
@@ -63,18 +64,20 @@ class Server {
 				db: this.db,
 				public: path.join(__dirname + "/../public"),
 				data: path.join(__dirname + "/../data"),
-				middleware: path.join(__dirname + "/../middleware"),
-				routes: path.join(__dirname + "/../routes"),
-				enums: path.join(__dirname + "/../enums"),
+				middleware: path.join(__dirname + "/middleware"),
+				routes: path.join(__dirname + "/routes"),
+				enums: path.join(__dirname + "/enums"),
+				servicesPath: path.join(__dirname + "/services"),
+				services: [],
 			};
 			utils.templates = require("./templates")(utils);
 			this.app.utils = utils;
-			utils.accountManager = new AccountManager(utils);
-			utils.permissionManager = new PermissionManager(utils.accountManager, utils);
 			utils.httpManager = new HttpManager();
 			this.middleware = require("./middleware/middleware")(this.app, utils);
-			require("./routes/routes")(this.app, utils);
 			this.injector = new Injector(utils);
+			await resolve();
+			this.organizer = new ServiceOrganizer(utils);
+			require("./routes/routes")(this.app, utils);
 			this.port = port || 80;
 			this.securePort = securePort || 443;
 			this.httpServer = http.createServer(this.app.instance).listen(this.port);
@@ -84,7 +87,6 @@ class Server {
 				httpsServer.listen(this.securePort);
 				this.logger.messages.listening(this.securePort);
 			}
-			resolve();
 		});
 	}
 
