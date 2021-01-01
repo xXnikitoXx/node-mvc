@@ -13,13 +13,17 @@ class Controller {
 		this.prefix = "";
 		this.app = app;
 		this.utils = utils;
-		this.DescribeRoutes();
-		this._init();
 		this.constructor.Finalize = this.Finalize;
 		this.constructor.View = this.View;
 		this.constructor.JSON = this.JSON;
 		this.constructor.Status = this.Status;
 		this.constructor.Redirect = this.Redirect;
+		this.Inject = function(dep) {
+			let target = utils.services.filter(s => s.name.toLowerCase() == dep.toLowerCase())[0];
+			this[dep] = target.object;
+		};
+		this.DescribeRoutes();
+		this._init();
 	}
 
 	get model() {
@@ -134,7 +138,7 @@ class Controller {
 		return await this.renderer.Render(target, this._req);
 	}
 
-	async JSON() {
+	JSON() {
 		if (arguments.length == 0)
 			return this.model;
 		else if (arguments.length == 1)
@@ -142,12 +146,12 @@ class Controller {
 		return [...arguments];
 	}
 
-	async Status(code) {
+	Status(code) {
 		this._sendStatus = true;
 		return Number(code);
 	}
 
-	async Redirect(path) {
+	Redirect(path) {
 		this._redirect = true;
 		return this._redirectPath = path || "/";
 	}
