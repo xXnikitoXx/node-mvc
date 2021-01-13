@@ -11,8 +11,8 @@ const y = colors.yellow;
 const r = colors.red;
 const m = colors.magenta;
 
-const l = config.logging ? (arg = "") => console.log(arg) : () => {};
-const lg = config.logging ? console.log : () => {};
+let l = config.logging ? (arg = "") => console.log(arg) : () => {};
+let lg = config.logging ? console.log : () => {};
 const e = (err) => l(rb(err));
 let lnl = 50;
 const ln = (n = lnl) => l(g("-").repeat(n));
@@ -24,7 +24,11 @@ const cmdh = command =>
 	Object.entries(command.help).map(([ cmd, help ]) => `\t${gb(" »")} ${gb(cmd)}: ${g(help)}`.replace(/\s{2,}/g, " "));
 
 class Logger {
-	constructor() {
+	constructor(logging = null) {
+		if (logging != null) {
+			l = logging ? (arg = "") => console.log(arg) : () => {};
+			lg = config.logging ? console.log : () => {};
+		}
 		this.messages = {
 			builderError: (error) => l(rb("Builder failed:\n" + r(error))),
 			builderSuccess: (msg) => l(gb(msg)),
