@@ -23,7 +23,7 @@ class Renderer {
 	 * @param {String} html 
 	 * @returns {String}
 	 */
-	async Render(html, req) {
+	async Render(html, req, renderExports = true) {
 		html = html.toString();
 		if (!html.includes("<") && !html.includes(">"))
 			if (fs.existsSync(html))
@@ -80,7 +80,7 @@ class Renderer {
 					}
 					await (eval(`async () => {
 						for (${statement.replace(/model/g, "this.model")})
-							body += await this.Render(iterateWith(template, variables.toValues(${variables.join(", ")})), req);
+							body += await this.Render(iterateWith(template, variables.toValues(${variables.join(", ")})), req, renderExports);
 					}`))();
 					html = html.substring(0, index) + body + html.substring(index + tag.length + nextClosingTag + `</${operator}>`.length);
 					break;
@@ -112,11 +112,14 @@ class Renderer {
 				case "import":
 					for (let item of items)
 						statement = statement.replace(new RegExp("{{model." + item.name + "}}", "g"), item.value);
-					body = await Renderer.RenderImport(this, body, req, statement, this.utils, this.useUrls);
+					body = await Renderer.RenderImport(this, body, req, statement, this.utils, this.useUrls, renderExports);
 					html = html.substring(0, index) + body + html.substring(index + tag.length + nextClosingTag + `</${operator}>`.length);
 					break;
 				case "export":
-					html = html.substring(0, index) + body + html.substring(index + tag.length + nextClosingTag + `</${operator}>`.length);
+					if (renderExports)
+						html = html.substring(0, index) + body + html.substring(index + tag.length + nextClosingTag + `</${operator}>`.length);
+					else
+						html = html.substring(0, index) + `<_export ${this.utils.appSettings.mvc.templates.defaultTarget}>\r\n` + body + "\r\n</_export>" + html.substring(index + tag.length + nextClosingTag + `</${operator}>`.length);
 					break;
 				case "request":
 					let [ type, url ] = statement.split(" ").filter(s => s.length > 0);
@@ -131,7 +134,7 @@ class Renderer {
 							.filter(h => s.length > 0);
 					let error = "";
 					if (body.includes("<error>") && body.includes("</error>"))
-						error = await this.Render(body.split("<error>")[1].split("</error>")[0], req);
+						error = await this.Render(body.split("<error>")[1].split("</error>")[0], req, renderExports);
 					try {
 						let hasBody = [ "get", "head", "delete", "options" ].includes(type);
 						let data = hasBody ? (
@@ -151,7 +154,7 @@ class Renderer {
 						html = html.substring(0, index) + body + html.substring(index + tag.length + nextClosingTag + `</${operator}>`.length);
 					} catch (e) {
 						html = html.substring(0, index) +
-							(await this.Render(error.replace(/{{message}}/g, e.toString()), req)) +
+							(await this.Render(error.replace(/{{message}}/g, e.toString()), req, renderExports)) +
 							html.substring(index + tag.length + nextClosingTag + `</${operator}>`.length);
 					}
 				break;
@@ -164,9 +167,9 @@ class Renderer {
 		return html;
 	}
 
-	static async RenderImport(instance, body, req, statement, utils, useUrls) {
+	static async RenderImport(instance, body, req, statement, utils, useUrls, renderExports) {
 		let exports = Renderer.Import(statement, utils, useUrls);
-		body = await instance.Render(body, req);
+		body = await instance.Render(body, req, renderExports);
 		Object.keys(exports)
 		.forEach(e => body = body.replace(new RegExp(`<${e}>`, "g"), exports[e]));
 		return body;

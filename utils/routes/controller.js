@@ -60,6 +60,8 @@ class Controller {
 	}
 
 	_init() {
+		let controllerName = this.__proto__.constructor.name;
+		this.utils.controllers[controllerName] = this;
 		let blacklist = [ "constructor", "DescribeRoutes" ];
 		let whitelist = [ "Route", "Method", "Dynamic", "Title", "Middleware", "Callback" ];
 		let prototypeDefinitions = Object.entries(Object.getOwnPropertyDescriptors(this.__proto__)).map(e => [ e[0], e[1].value ]);
@@ -87,6 +89,7 @@ class Controller {
 			this.app[description.Method.toLowerCase()].apply(this.app, [
 				description.Route,
 				description.Title,
+				controllerName,
 				description.Dynamic,
 				...description.Middleware,
 				(req, res, next) => {
@@ -97,6 +100,7 @@ class Controller {
 						this._redirect = false;
 						this._redirectPath = "/";
 						this._sendStatus = false;
+						this._renderExports = true;
 						this._targetView = this.utils.public + description.Route + ".html";
 						this._viewExists = fs.existsSync(this._targetView);
 						let result = await description.Callback.apply(this, [ req, res, next ]);
@@ -132,10 +136,10 @@ class Controller {
 			}
 		}
 		if (this._viewExists)
-			return await this.renderer.Render(this._targetView, this._req);
+			return await this.renderer.Render(this._targetView, this._req, this._renderExports);
 		if (target == "")
 			return this.Redirect("/404");
-		return await this.renderer.Render(target, this._req);
+		return await this.renderer.Render(target, this._req, this._renderExports);
 	}
 
 	JSON() {

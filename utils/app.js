@@ -21,6 +21,7 @@ class App {
 				let skip = 1;
 				let url = arguments[0];
 				let title = undefined;
+				let controller = undefined;
 				if (typeof(arguments[1]) == "string") {
 					title = arguments[1];
 					skip++;
@@ -33,9 +34,17 @@ class App {
 					if (!arguments[2])
 						template = "redirect";
 					skip++;
+				} else if (typeof(arguments[2]) == "string") {
+					controller = arguments[2];
+					skip++;
+					if (typeof(arguments[3]) == "boolean") {
+						if (!arguments[3])
+							template = "redirect";
+						skip++;
+					}
 				}
 				if (method == "get")
-					this.utils.templates.register(template, [ url ], title);
+					this.utils.templates.register(template, [ url ], title, controller);
 				this.utils.logger.messages.configuring(url, method.toUpperCase());
 				let args = [ url, (req, res, next) => { this.utils.logger.messages.request(url); next(); } ].concat([...arguments].slice(skip));
 				this.instance[method].apply(this.instance, args);

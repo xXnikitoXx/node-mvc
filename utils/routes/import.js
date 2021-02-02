@@ -1,4 +1,4 @@
-const { Renderer } = require("./../render");
+const fs = require("fs");
 
 /**
  * The HTTP variant of importing HTML modules from templates.
@@ -19,23 +19,45 @@ module.exports = (app, utils) => {
 		utils.csrfProtection(req, res, () => {
 			if (utils.templates.isRedirect(req.body.template)) {
 				res.send("redirect " + req.body.template);
-			}
-			else {
+			} else {
 				req.body.template = req.body.template.split("?")[0];
 				let template = utils.templates.loadByUrl(req.body.template, true);
-				req.body.template = `${template ?
-					template.cache.split(`<export ${utils.appSettings.mvc.templates.defaultTarget}>`)[1].split("</export>")[0] :
-					`<import ${req.body.template}>\r\n\t<${utils.appSettings.mvc.templates.defaultTarget}>\r\n</import>`}\r\n<script>model = {{...model}};</script>`;
-				req.body.model.user = req.user;
-				req.body.model.error = "";
-				req.body.model.csrfToken = req.csrfToken();
-				req.body.model.title = template ? template.title : req.body.model.title;
-				let renderer = new Renderer(req.body.model, utils, true);
-				req.url = req.body.template;
-				let result = "redirect /404";
-				new Promise(async (resolve) => resolve(await renderer.Render(req.body.template, req)))
-				.then(result => res.send(result))
-				.catch(() => res.send(result));
+				if (template) {
+					const matchUrls = (x, y) => {
+						x = x.toLowerCase().trim();
+						y = y.toLowerCase().trim();
+						return x == y;
+					}
+					let controller = utils.controllers[template.controller];
+					let methods = Object.values(controller.methods); 
+					let method = methods
+						.filter(m => matchUrls(req.body.template, m.Route) && m.Method.toUpperCase() == "GET")[0];
+					new Promise(async (resolve, reject) => {
+						controller.model = { title: method.Title, lang: req.lang || undefined },
+						controller._req = req;
+						controller._response = undefined;
+						controller._redirect = false;
+						controller._redirectPath = "/";
+						controller._sendStatus = false;
+						controller._renderExports = false;
+						controller._targetView = controller.utils.public + method.Route + ".html";
+						controller._viewExists = fs.existsSync(controller._targetView);
+						let result = await method.Callback.apply(controller, [ req, res, next ]);
+						resolve(result);
+					})
+					.then(response => {
+						if (this._redirect)
+							return res.redirect(this._redirectPath || "/");
+						if (response == undefined || response == null)
+							response = this._response;
+						if (typeof(response) == "number" && !this._sendStatus)
+							response = response.toString();
+						if (response.includes("<_export"))
+							response = response.split(`<_export ${utils.appSettings.mvc.templates.defaultTarget}>`)[1].split("</_export>")[0];
+						res[this._sendStatus ? "sendStatus" : "send"](response);
+					});
+				} else
+					res.send("redirect /404");
 			}
 		})
 	});

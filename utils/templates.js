@@ -1,16 +1,17 @@
 const fs = require("fs");
 const path = require("path");
 
-module.exports = (utils) => {
+module.exports = utils => {
 	let templates = {
 		list: [],
-		register(path, urls = [], title) {
+		register(path, urls = [], title, controller) {
 			if (!templates.load(path))
 				templates.list.push({
 					id: path,
 					cache: null,
 					urls,
 					title,
+					controller,
 				});
 		},
 		load(template, targetObject = false) {

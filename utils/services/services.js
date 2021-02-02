@@ -1,7 +1,7 @@
 const fs = require("fs");
 const path = require("path");
 
-const closingBracket = (str) => {
+const closingBracket = str => {
 	let depth = 1;
 	for (let i = 0; i < str.length; i++)
 		switch (str[i]) {

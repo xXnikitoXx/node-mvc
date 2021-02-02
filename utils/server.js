@@ -5,9 +5,6 @@ const { Logger } = require("./logger");
 const { App } = require("./app");
 const { Injector } = require("./database/injector");
 const { ServiceOrganizer } = require("./services/services");
-const { AccountManager } = require("./services/accountManager");
-const { PermissionManager } = require("./services/permissionManager");
-const { HttpManager } = require("./services/httpManager");
 const http = require("http");
 const https = require("https");
 
@@ -69,10 +66,10 @@ class Server {
 				enums: path.join(__dirname + "/enums"),
 				servicesPath: path.join(__dirname + "/services"),
 				services: [],
+				controllers: [],
 			};
 			utils.templates = require("./templates")(utils);
 			this.app.utils = utils;
-			utils.httpManager = new HttpManager();
 			this.middleware = require("./middleware/middleware")(this.app, utils);
 			this.injector = new Injector(utils);
 			await resolve();
