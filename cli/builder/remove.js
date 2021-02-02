@@ -40,7 +40,20 @@ module.exports = function() {
 	else if (!Object.keys(types).includes(arguments[1]))
 		[ type, name ] = [ arguments[1] == "*" ? "all" : "any", arguments[2] ];
 	else
-		[ logger, type, name ] = arguments;
+		[ , type, name ] = arguments;
+
+	switch (type) {
+		case "c":
+			type = "controller";
+			break;
+		case "s":
+			type = "service";
+			break;
+		case "v":
+			type = "view";
+			break;
+	}
+
 
 	let targetPath = target(type, name);
 	if (Array.isArray(targetPath)) {
