@@ -18,9 +18,23 @@ class Controller {
 		this.constructor.JSON = this.JSON;
 		this.constructor.Status = this.Status;
 		this.constructor.Redirect = this.Redirect;
+		/**
+		 * @param {String} dep
+		 */
 		this.Inject = function(dep) {
 			let target = utils.services.filter(s => s.name.toLowerCase() == dep.toLowerCase())[0];
 			this[dep] = target.object;
+			return {
+				/**
+				 * @param {String} dep
+				 */
+				As: (name) => {
+					if (dep == name)
+						return;
+					this[name] = this[dep];
+					delete this[dep];
+				}
+			}
 		};
 		this.DescribeRoutes();
 		this._init();
