@@ -13,6 +13,7 @@ class Profile extends Controller {
 		this.prefix = "/profile";
 
 		this.IndexGetRoute = "";
+		this.IndexGetTitle = "Profile";
 		this.IndexGetMiddleware = [
 			this.utils.loginRedirect.required,
 			this.utils.csrfProtection,

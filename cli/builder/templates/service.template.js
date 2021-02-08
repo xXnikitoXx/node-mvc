@@ -2,23 +2,26 @@ const fs = require("fs");
 const path = require("path");
 const { Validator } = require("./../database/validator");
 const dbConfig = JSON.parse(fs.readFileSync(__dirname + "/../../data/dbsettings.json")).mongo.collections;
-const userModel = dbConfig.users.model;
+const §singularModel = dbConfig.§plural.model;
 
 /**
  * §description.
  * @class
  */
-class §name {
+class §Name {
 	/**
-	 * Initializes new §name.
+	 * Initializes new §Name.
 	 * @param {any} utils
-	 * @constructs §name
+	 * @constructs §Name
 	 */
 	constructor(utils) {
 		this.utils = utils;
-		this.users = utils.db.Collection("users");
-
+		this.§plural = utils.db.Collection("§plural");
+		this.validator = new Validator(§singularModel);
+		this.validatorError = "Invalid §singular model!";
 	}
+
+§methods
 }
 
-module.exports = { §name };
+module.exports = { §Name };
