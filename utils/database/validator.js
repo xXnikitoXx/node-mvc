@@ -44,6 +44,8 @@ class Validator {
 
 	IsValid(object) {
 		for (let prop in object) {
+			if (prop == "_id")
+				continue;
 			if (this[prop] == undefined)
 				if (this.strict) {
 					console.log(prop + " is not defined!");
