@@ -3,6 +3,8 @@ const path = require("path");
 const { Iterator } = require("./iterator");
 
 const templateError = "Template not found!";
+const layoutError = "Layout not found!";
+const layoutStructError = "Invalid layout!";
 
 class Renderer {
 	constructor(object, utils, useUrls = false) {
@@ -13,7 +15,7 @@ class Renderer {
 			delete this.model.user.password;
 		this.useUrls = useUrls;
 		this.pattern = {
-			openTag: /<(if|for|switch|import|export|request)\b(.*)>/,
+			openTag: /<(if|for|switch|import|export|request|layout|view)\b(.*)>/,
 		}
 	}
 
@@ -157,7 +159,20 @@ class Renderer {
 							(await this.Render(error.replace(/{{message}}/g, e.toString()), req, renderExports)) +
 							html.substring(index + tag.length + nextClosingTag + `</${operator}>`.length);
 					}
-				break;
+					break;
+				case "layout":
+					if (renderExports) {
+						let layoutPath = path.join(this.utils.public, statement.replace(/[\s\\\.\-]/g, "/") + ".html");
+						if (!fs.existsSync(layoutPath))
+							throw new Error(layoutError);
+						let layout = fs.readFileSync(layoutPath).toString();
+						let [ start, end ] = layout.split("<view>");
+						if (end == undefined)
+							throw new Error(layoutStructError);
+						html = html.substring(0, index) + start + body + end + html.substring(index + tag.length + nextClosingTag + `</${operator}>`.length);
+					} else
+						html = html.substring(0, index) + `<_layout ${this.utils.appSettings.mvc.templates.defaultTarget}>\r\n` + body + "\r\n</_layout>" + html.substring(index + tag.length + nextClosingTag + `</${operator}>`.length);
+					break;
 			}
 		}
 		for (let item of items)

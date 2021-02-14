@@ -1,58 +1,24 @@
-<!DOCTYPE html>
-<html>
-	<head>
-		<title>{{model.title}}</title>
-		<meta charset="utf-8" />
-		<link rel="stylesheet" href="materialize/css/materialize.css">
-		<link rel="stylesheet" href="css/font-awesome/css/font-awesome.css">
-		<link rel="stylesheet" href="css/navbar.css">
-		<link rel="stylesheet" href="css/error.css">
-		<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
-		<script src="js/jQuery.js"></script>
-		<script src="materialize/js/materialize.js"></script>
-		<script src="js/vue.js"></script>
-		<script type="module" src="js/pager/pager.js"></script>
-		<import templates.scripts.model>
-			<default>
-			<user>
-		</import>
-	</head>
-	<body>
-		<lock>
-			<import templates.generic.navbar>
-				<default>
-				<script src="js/home/navbar.js"></script>
-			</import>
-		</lock>
-		<main>
-			<export default>
-				<div id="error" class="row" style="margin-top: 264px;">
-					<div class="col m3"></div>
-					<div class="card col m6 grey darken-4 white-text">
-						<div class="card-content" style="padding-top: 0 !important;">
-							<h1 style="font-size: 128pt;">{{model.statusCode}}</h1>
-							<h4>{{model.message}}</h4>
-						</div>
-						<div class="card-action">
-							<a class="teal-text" href="javascript:history.back()">{{ back }}</a>
-							<a class="teal-text" href="/">{{ homepage }}</a>
-						</div>
-					</div>
+<layout layouts.main>
+	<export default>
+		<div id="error" class="row" style="margin-top: 264px;">
+			<div class="col m3"></div>
+			<div class="card col m6 grey darken-4 white-text">
+				<div class="card-content" style="padding-top: 0 !important;">
+					<h1 style="font-size: 128pt;">{{model.statusCode}}</h1>
+					<h4>{{model.message}}</h4>
 				</div>
-				<script src="js/error/error.js"></script>
-				<script>
-					for (let i = 0; i < navbar.leftTabs.length; i++)
-						navbar.leftTabs[i].active = false;
-					for (let i = 0; i < navbar.rightTabs.length; i++)
-						navbar.rightTabs[i].active = false;
-				</script>
-			</export>
-		</main>
-		<lock>
-			<import templates.generic.footer>
-				<default>
-				<script src="js/home/footer.js"></script>
-			</import>
-		</lock>
-	</body>
-</html>
+				<div class="card-action">
+					<a class="teal-text" href="javascript:history.back()">{{ back }}</a>
+					<a class="teal-text" href="/">{{ homepage }}</a>
+				</div>
+			</div>
+		</div>
+		<script src="js/error/error.js"></script>
+		<script>
+			for (let i = 0; i < navbar.leftTabs.length; i++)
+				navbar.leftTabs[i].active = false;
+			for (let i = 0; i < navbar.rightTabs.length; i++)
+				navbar.rightTabs[i].active = false;
+		</script>
+	</export>
+</layout>
