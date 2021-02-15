@@ -88,8 +88,9 @@ class Renderer {
 					break;
 				case "switch":
 					let switchResult = eval(statement.replace(/model./g, "this.model."));
-					let cases = body.substring(tag.length).split("<case ")
-					.map(c => ({
+					let cases = body.split("<case ");
+					cases.shift();
+					cases = cases.map(c => ({
 						statement: c.split(">\r\n")[0],
 						body: c
 					}))
