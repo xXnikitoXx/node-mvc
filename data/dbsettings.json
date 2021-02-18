@@ -26,13 +26,6 @@
 						"emailConfirmed": true
 					}
 				}
-			},
-			"registrations": {
-				"model": {
-					"name": "string",
-					"email": "string",
-					"city": "string"
-				}
 			}
 		}
 	}

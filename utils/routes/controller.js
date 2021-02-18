@@ -108,7 +108,7 @@ class Controller {
 				...description.Middleware,
 				(req, res, next) => {
 					new Promise(async (resolve, reject) => {
-						this.model = { title: description.Title, lang: req.lang || undefined },
+						this.model = { title: description.Title, lang: req.lang || undefined, user: req.user },
 						this._req = req;
 						this._response = undefined;
 						this._redirect = false;
