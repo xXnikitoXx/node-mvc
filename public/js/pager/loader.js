@@ -39,12 +39,12 @@ export class Loader {
 						model: model,
 					})
 				})
-				.then(response => response.text())
+				.then(response => response.json())
 				.then(data => {
-					if (data.startsWith("redirect "))
-						return window.location.href = data.slice(9);
+					if (data.template.startsWith("redirect "))
+						return window.location.href = data.template.slice(9);
 					let div = document.createElement("div");
-					div.innerHTML = data.trim();
+					div.innerHTML = data.template.trim();
 					let main = document.querySelector("body > main");
 					main.style.transition = "";
 					main.style.opacity = "0";
@@ -60,6 +60,7 @@ export class Loader {
 							script.remove();
 						});
 						setTimeout(() => {
+							model = data.model;
 							document.title = model.title || document.title;
 							if (!popstate)
 								history.pushState({}, model.title, url);

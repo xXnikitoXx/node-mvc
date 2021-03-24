@@ -10,7 +10,7 @@ class Registrar {
 		this.definitions = require("./../enums/roles");
 		this.raw = JSON.parse(fs.readFileSync(utils.data + "/permissions/all.json"));
 		this.roles = {};
-		for (let role in this.definitions)
+		for (const role in this.definitions)
 			this.roles[role] = new Role(
 				role,
 				this.definitions[role] || 0,
@@ -20,8 +20,8 @@ class Registrar {
 	}
 
 	Add(role, permissions = []) {
-		if (!this.roles[name]) {
-			this.roles[name] = new Role(
+		if (!this.roles[role]) {
+			this.roles[role] = new Role(
 				role,
 				this.definitions[role] || 0,
 				permissions,

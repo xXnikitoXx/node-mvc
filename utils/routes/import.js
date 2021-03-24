@@ -7,7 +7,7 @@ const fs = require("fs");
  * @param {any} utils
  */
 module.exports = (app, utils) => {
-	let logging = utils.appSettings.mvc.templates.dynamicLoaderLogs;
+	const logging = utils.appSettings.mvc.templates.dynamicLoaderLogs;
 	utils.logger.messages.configuring("/import", "POST");
 	app.instance.post("/import", (req, res, next) => {
 		if (logging.native && logging.target)
@@ -21,19 +21,19 @@ module.exports = (app, utils) => {
 				res.send("redirect " + req.body.template);
 			} else {
 				req.body.template = req.body.template.split("?")[0];
-				let template = utils.templates.loadByUrl(req.body.template, true);
+				const template = utils.templates.loadByUrl(req.body.template, true);
 				if (template) {
 					const matchUrls = (x, y) => {
 						x = x.toLowerCase().trim();
 						y = y.toLowerCase().trim();
 						return x == y;
-					}
-					let controller = utils.controllers[template.controller];
-					let methods = Object.values(controller.methods); 
-					let method = methods
+					};
+					const controller = utils.controllers[template.controller];
+					const methods = Object.values(controller.methods); 
+					const method = methods
 						.filter(m => matchUrls(req.body.template, m.Route) && m.Method.toUpperCase() == "GET")[0];
-					new Promise(async (resolve, reject) => {
-						controller.model = { title: method.Title, lang: req.lang || undefined },
+					(async resolve => {
+						controller.model = { title: method.Title, lang: req.lang || undefined, user: req.user },
 						controller._req = req;
 						controller._response = undefined;
 						controller._redirect = false;
@@ -42,23 +42,22 @@ module.exports = (app, utils) => {
 						controller._renderExports = false;
 						controller._targetView = controller.utils.public + method.Route + ".html";
 						controller._viewExists = fs.existsSync(controller._targetView);
-						let result = await method.Callback.apply(controller, [ req, res, next ]);
+						const result = await method.Callback.apply(controller, [ req, res, next ]);
 						resolve(result);
-					})
-					.then(response => {
+					})(response => {
 						if (this._redirect)
 							return res.redirect(this._redirectPath || "/");
-						if (response == undefined || response == null)
+						if (response == undefined || response === null)
 							response = this._response;
-						if (typeof(response) == "number" && !this._sendStatus)
+						if (typeof response == "number" && !this._sendStatus)
 							response = response.toString();
 						if (response.includes("<_export"))
 							response = response.split(`<_export ${utils.appSettings.mvc.templates.defaultTarget}>`)[1].split("</_export>")[0];
-						res[this._sendStatus ? "sendStatus" : "send"](response);
+						res[this._sendStatus ? "sendStatus" : "send"]({ model: controller.model, template: response });
 					});
 				} else
 					res.send("redirect /404");
 			}
-		})
+		});
 	});
 };

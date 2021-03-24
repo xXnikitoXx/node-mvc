@@ -3,7 +3,9 @@ const { Controller } = require("./controller");
 class Home extends Controller {
 	DescribeRoutes() {
 		this.prefix = "";
+
 		this.IndexRoute = "/";
+		this.IndexTitle = "Welcome!";
 	}
 
 	async Index() {

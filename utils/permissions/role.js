@@ -4,7 +4,7 @@ class Role {
 		this.importance = importance;
 		this.permissions = [];
 		this.permissionsList = permissionsList;
-		for (let p of permissions)
+		for (const p of permissions)
 			this.AddRule(p);
 	}
 
@@ -24,12 +24,12 @@ class Role {
 
 	Permit(permission) {
 		if (permission.includes("*")) {
-			let beginning = permission.split("*")[0];
+			const beginning = permission.split("*")[0];
 			if (this.permissions.some(p => p.name == beginning + "*"))
 				this.permissions.filter(p => p.name == beginning + "*")[0].allow = true;
 			else
 				this.permissions.push({ name: beginning + "*", allow: true });
-			for (let permission of this.permissionsList.filter(p => p.startsWith(beginning)))
+			for (const permission of this.permissionsList.filter(p => p.startsWith(beginning)))
 				this.Permit(permission);
 		} else {
 			if (this.permissions.some(p => p.name == permission))
@@ -41,12 +41,12 @@ class Role {
 
 	Forbid(permission) {
 		if (permission.includes("*")) {
-			let beginning = permission.split("*")[0];
+			const beginning = permission.split("*")[0];
 			if (this.permissions.some(p => p.name == beginning + "*"))
 				this.permissions.filter(p => p.name == beginning + "*")[0].allow = false;
 			else
 				this.permissions.push({ name: beginning + "*", allow: false });
-			for (let permission of this.permissionsList.filter(p => p.startsWith(beginning)))
+			for (const permission of this.permissionsList.filter(p => p.startsWith(beginning)))
 				this.Forbid(permission);
 		} else {
 			if (this.permissions.some(p => p.name == permission))
@@ -57,8 +57,8 @@ class Role {
 	}
 
 	Can(permission) {
-		let permitted = this.permissions.filter(p => p.allow);
-		if (typeof(permission) !== "string")
+		const permitted = this.permissions.filter(p => p.allow);
+		if (typeof permission !== "string")
 			permission = "none";
 		return permitted.some(p => p.name == permission);
 	}

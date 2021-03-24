@@ -40,9 +40,8 @@ class Register extends Controller {
 			return await this.Redirect("/404");
 		try {
 			await this.accountManager.Register(req.body);
-			return await this.Finalize(await this.Redirect("/login"))
+			return await this.Finalize(await this.Redirect("/login"));
 		} catch (err) {
-			console.log(err);
 			this.model.csrfToken = req.csrfToken();
 			switch(err) {
 				case 0:

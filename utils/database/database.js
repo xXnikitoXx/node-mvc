@@ -1,8 +1,8 @@
 const fs = require("fs");
-const { MongoClient, Db } = require("mongodb");
+const { MongoClient } = require("mongodb");
 const { DBHelper } = require("./helpers/mongodb_helper");
 const { Logger } = new require("./../logger");
-let logger = new Logger();
+const logger = new Logger();
 const appSettings = JSON.parse(fs.readFileSync(__dirname + "/../../data/appsettings.json"));
 const dbSettings = JSON.parse(fs.readFileSync(__dirname + "/../../data/dbsettings.json"));
 

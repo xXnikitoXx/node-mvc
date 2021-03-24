@@ -1,6 +1,6 @@
 module.exports = {
 	required: (role) => {
-		let middleware = (req, res, next) => {
+		const middleware = (req, res, next) => {
 			if (req.user.role == role)
 				next();
 			else

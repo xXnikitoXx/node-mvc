@@ -10,7 +10,7 @@ const csrf = require("csurf");
 const passport = require("passport");
 const loginRedirect = require("./../authentication/loginRedirect");
 const middlewareFiles = fs.readdirSync(__dirname).filter(route => route != "middleware.js").map(route => "./" + route.split(".js")[0]);
-let csrfProtection = csrf({ cookie: true });
+const csrfProtection = csrf({ cookie: true });
 
 /**
  * @function
@@ -27,7 +27,7 @@ module.exports = (app, utils) => {
 	app.use(cookieParser());
 	app.use(helmet());
 	app.use((req, res, next) => {
-		let features = [
+		const features = [
 			// "accelerometer 'none'",
 			// "ambient-light-sensor 'none'",
 			// "autoplay 'none'",
@@ -59,7 +59,7 @@ module.exports = (app, utils) => {
 			// "xr-spatial-tracking 'none'",
 		];
 		res.setHeader("Permissions-Policy", features.join("; "));
-		let csp = {
+		const csp = {
 			"default": [
 				`'self'`,
 				`'unsafe-eval'`,
@@ -120,7 +120,7 @@ module.exports = (app, utils) => {
 	);
 	passport.use(require("./../authentication/local")(utils));
 
-	for (let middleware of middlewareFiles)
+	for (const middleware of middlewareFiles)
 		require(middleware)(app, utils);
 	return { csrfProtection };
 };

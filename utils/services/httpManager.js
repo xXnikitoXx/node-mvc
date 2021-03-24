@@ -1,35 +1,35 @@
 const fetch = require("node-fetch");
 
 class HttpManager {
-	async get(url, headers = []) {
+	static async get(url, headers = []) {
 		return await fetch(url, {
 			method: "GET",
 			headers,
 		});
 	}
 
-	async head(url, headers = []) {
+	static async head(url, headers = []) {
 		return await fetch(url, {
 			method: "HEAD",
 			headers,
 		});
 	}
 
-	async delete(url, headers = []) {
+	static async delete(url, headers = []) {
 		return await fetch(url, {
 			method: "DELETE",
 			headers,
 		});
 	}
 
-	async options(url, headers = []) {
+	static async options(url, headers = []) {
 		return await fetch(url, {
 			method: "OPTIONS",
 			headers,
 		});
 	}
 
-	async post(url, body, headers = []) {
+	static async post(url, body, headers = []) {
 		return await fetch(url, {
 			method: "POST",
 			headers,
@@ -37,7 +37,7 @@ class HttpManager {
 		});
 	}
 
-	async put(url, body, headers = []) {
+	static async put(url, body, headers = []) {
 		return await fetch(url, {
 			method: "PUT",
 			headers,
@@ -45,7 +45,7 @@ class HttpManager {
 		});
 	}
 
-	async patch(url, body, headers = []) {
+	static async patch(url, body, headers = []) {
 		return await fetch(url, {
 			method: "PATCH",
 			headers,
@@ -53,7 +53,7 @@ class HttpManager {
 		});
 	}
 
-	async trace(url, body, headers = []) {
+	static async trace(url, body, headers = []) {
 		return await fetch(url, {
 			method: "TRACE",
 			headers,
@@ -61,7 +61,7 @@ class HttpManager {
 		});
 	}
 
-	async connect(url, body, headers = []) {
+	static async connect(url, body, headers = []) {
 		return await fetch(url, {
 			method: "CONNECT",
 			headers,

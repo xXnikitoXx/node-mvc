@@ -21,7 +21,7 @@ class Server {
 	 */
 	constructor(log = true, production = false) {
 		this.log = log;
-		this.production = production;
+		this.production = process.env.NODE_ENV = production;
 		this.logger = new Logger(log);
 		this.appSettings = JSON.parse(fs.readFileSync(__dirname + "/../data/appsettings.json"));
 		if (fs.existsSync(__dirname + "/../certs"))
@@ -38,7 +38,7 @@ class Server {
 	 * @param {number} securePort 
 	 */
 	Run(port = process.env.PORT, securePort = process.env.SECURE_PORT) {
-		return new Promise(async (resolve, reject) => {
+		return (async resolve => {
 			if (this.appSettings.connectToDatabase)
 				try {
 					this.dbConnect = require("./database/database");
@@ -52,8 +52,8 @@ class Server {
 					}
 				}
 			this.app = new App(express());
-			let production = this.production;
-			let utils = {
+			const production = this.production;
+			const utils = {
 				get production() { return production; },
 				appSettings: this.appSettings,
 				dbSettings: this.dbSettings,
@@ -72,7 +72,7 @@ class Server {
 			this.app.utils = utils;
 			this.middleware = require("./middleware/middleware")(this.app, utils);
 			this.injector = new Injector(utils);
-			await resolve();
+			await resolve;
 			this.organizer = new ServiceOrganizer(utils);
 			require("./routes/routes")(this.app, utils);
 			this.port = port || 80;
@@ -80,11 +80,11 @@ class Server {
 			this.httpServer = http.createServer(this.app.instance).listen(this.port);
 			this.logger.messages.listening(this.port);
 			if (!this.appSettings.proxied) {
-				let httpsServer = https.createServer(this.sslCredentials, this.app.instance);
+				const httpsServer = https.createServer(this.sslCredentials, this.app.instance);
 				httpsServer.listen(this.securePort);
 				this.logger.messages.listening(this.securePort);
 			}
-		});
+		})();
 	}
 
 	async Inject(collection, pattern, file) {

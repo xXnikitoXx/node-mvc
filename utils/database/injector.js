@@ -19,7 +19,7 @@ class Injector {
      * @param {String} file
      * @returns {any} object
      */
-    Parse(pattern, file) {
+    static Parse(pattern, file) {
         if (!fs.existsSync(file))
             return JSON.parse(pattern.replace("$content", `""`));
         file = fs.readFileSync(file);
@@ -41,7 +41,7 @@ class Injector {
                 return;
             }
             collection = this.utils.db.Collection(collection);
-            collection.insertOne(this.Parse(pattern, file))
+            collection.insertOne(Injector.Parse(pattern, file))
             .then(resolve)
             .catch(reject);
         });

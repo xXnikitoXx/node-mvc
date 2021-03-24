@@ -10,7 +10,9 @@
 					<h5 class="white-text">{{ linksHeading }}</h5>
 					<ul>
 						<template v-for="link in links">
-							<li><a class="grey-text text-lighten-3" :href="link.url">{{ link.text }}</a></li>
+							<li>
+								<a class="grey-text text-lighten-3" :href="link.url">{{ link.text }}</a>
+							</li>
 						</template>
 					</ul>
 				</div>

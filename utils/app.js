@@ -16,13 +16,13 @@ class App {
 	}
 
 	updateMethods() {
-		for (let method of App.methods)
+		for (const method of App.methods)
 			this[method] = function() {
 				let skip = 1;
-				let url = arguments[0];
+				const url = arguments[0];
 				let title = undefined;
 				let controller = undefined;
-				if (typeof(arguments[1]) == "string") {
+				if (typeof arguments[1] == "string") {
 					title = arguments[1];
 					skip++;
 				}
@@ -30,14 +30,14 @@ class App {
 				template = (url.startsWith("/") ? url.slice(1) : url).replace(/\//g, ".");
 				if (template.length == 0)
 					template = "home";
-				if (typeof(arguments[2]) == "boolean") {
+				if (typeof arguments[2] == "boolean") {
 					if (!arguments[2])
 						template = "redirect";
 					skip++;
-				} else if (typeof(arguments[2]) == "string") {
+				} else if (typeof arguments[2] == "string") {
 					controller = arguments[2];
 					skip++;
-					if (typeof(arguments[3]) == "boolean") {
+					if (typeof arguments[3] == "boolean") {
 						if (!arguments[3])
 							template = "redirect";
 						skip++;
@@ -46,9 +46,9 @@ class App {
 				if (method == "get")
 					this.utils.templates.register(template, [ url ], title, controller);
 				this.utils.logger.messages.configuring(url, method.toUpperCase());
-				let args = [ url, (req, res, next) => { this.utils.logger.messages.request(url); next(); } ].concat([...arguments].slice(skip));
+				const args = [ url, (req, res, next) => { this.utils.logger.messages.request(url); next(); } ].concat([...arguments].slice(skip));
 				this.instance[method].apply(this.instance, args);
-			}
+			};
 	}
 
 	use() {

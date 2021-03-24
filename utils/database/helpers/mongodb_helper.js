@@ -8,7 +8,6 @@ class DBHelper {
 	}
 
 	get Collections() {
-		this.logger.messages
 		return this.db.listCollections({}, { nameOnly: true }).toArray();
 	}
 
@@ -18,10 +17,10 @@ class DBHelper {
 	EnsureCreated() {
 		this.Collections.then(data => {
 			this.collections = data.map(x => x.name);
-			for (let collection in this.dbSettings.collections) {
+			for (const collection in this.dbSettings.collections) {
 				if (!this.collections.some(x => x == collection))
 					this.db.createCollection(collection)
-						.then(data => this.logger.messages.createdCollection(collection))
+						.then(() => this.logger.messages.createdCollection(collection))
 						.catch(err => this.logger.messages.dbError(err));
 			}
 			this.logger.messages.dbChecked();			
@@ -29,18 +28,18 @@ class DBHelper {
 	}
 
 	Collection(name) {
-		let collection = this.db.collection(name);
+		const collection = this.db.collection(name);
 		return collection;
 	}
 
 	Find(collection, object) {
-		if (typeof(collection) === "string")
+		if (typeof collection === "string")
 			collection = this.Collection(collection);
-		return collection.findOne(object)
+		return collection.findOne(object);
 	}
 
 	Insert(collection, objects) {
-		if (typeof(collection) === "string")
+		if (typeof collection === "string")
 			collection = this.Collection(collection);
 		if (!Array.isArray(objects))
 			objects = [ objects ];
@@ -48,9 +47,8 @@ class DBHelper {
 		collection.insertMany(objects);
 	}
 
-	Generate(factory, constraints, amount) {
-		let objects = factory.Generate(amount, constraints);
-		return objects;
+	static Generate(factory, constraints, amount) {
+		return factory.Generate(amount, constraints);
 	}
 }
 

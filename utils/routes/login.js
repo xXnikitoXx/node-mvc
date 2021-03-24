@@ -39,25 +39,31 @@ class Login extends Controller {
 	async LoginPost(req, res, next) {
 		if (!this.utils.db)
 			return await this.Redirect("/404");
-		let controller = this;
-		return await new Promise(async (resolve, reject) => {
-			this.utils.passport.authenticate("local", (err, user, info) => {
-				const errorResponse = async () => {
-					return resolve(await controller.View({
-						csrfToken: req.csrfToken(),
-						error: "{{form.error}}",
-					}));
-				};
-				if (err != null)
-					return new Promise(async () => resolve(await errorResponse())).then();
-				req.logIn(user, function(err) {
-					if (err)
-						return new Promise(async () => resolve(await errorResponse())).then();
-					let remember = req.body["remember"] != undefined;
-					if (remember)
-						req.session.cookie.expires = false;
-					new Promise(async () => resolve(await controller.Redirect()));
+		const controller = this;
+		const result = async (err, user) => {
+			const errorResponse = async () => {
+				return await controller.View({
+					csrfToken: req.csrfToken(),
+					error: "{{form.error}}",
 				});
+			};
+
+			if (err !== null)
+				return errorResponse();
+
+			req.logIn(user, function(err) {
+				if (err)
+					return errorResponse();
+				const remember = req.body["remember"] != undefined;
+				if (remember)
+					req.session.cookie.expires = false;
+				return controller.Redirect();
+			});
+		};
+
+		return await new Promise(resolve => {
+			this.utils.passport.authenticate("local", (err, user) => {
+				result(err, user).then(resolve);
 			})(req, res, next);
 		});
 	}

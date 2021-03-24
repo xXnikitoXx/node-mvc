@@ -11,9 +11,9 @@ class Validator {
 	 */
 	constructor(model, strict = false) {
 		this.strict = strict;
-		for (let prop in model) {
-			let mod = model[prop];
-			switch (typeof(mod)) {
+		for (const prop in model) {
+			const mod = model[prop];
+			switch (typeof mod) {
 				case "string":
 					this[prop] = {
 						type: mod,
@@ -26,24 +26,23 @@ class Validator {
 							min: mod[1],
 							max: mod[2],
 						};
-					} else {
-						this[prop] = mod;  
-					}
+					} else
+						this[prop] = mod;
 					break;
 			}
 		}
 	}
 
-	Type(prop) {
-		switch (typeof(prop)) {
+	static Type(prop) {
+		switch (typeof prop) {
 			case "number": return Math.round(prop) == prop ? "integer" : "float";
-			case "object": Array.isArray(prop) ? "array" : "object";
-			default: return typeof(prop);
+			case "object": return Array.isArray(prop) ? "array" : "object";
+			default: return typeof prop;
 		}
 	}
 
 	IsValid(object) {
-		for (let prop in object) {
+		for (const prop in object) {
 			if (prop == "_id")
 				continue;
 			if (this[prop] == undefined)
@@ -54,7 +53,7 @@ class Validator {
 				else continue;
 			const obj = object[prop];
 			const mod = this[prop];
-			const type = Array.isArray(obj) ? "array" : this.Type(obj);
+			const type = Array.isArray(obj) ? "array" : Validator.Type(obj);
 			if (mod.type != undefined)
 				if (type != mod.type) {
 					console.log(`${prop} must be ${mod.type}!`);

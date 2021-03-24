@@ -14,10 +14,10 @@ const closingBracket = str => {
 				break;
 		}
 	return -1;
-}
+};
 
 class ServiceOrganizer {
-    constructor(utils) {
+	constructor(utils) {
 		this.utils = utils;
 		this.path = path.join(utils.servicesPath);
 		this.paths = fs.readdirSync(this.path)
@@ -31,8 +31,8 @@ class ServiceOrganizer {
 	}
 
 	static LoadServices(paths) {
-		let services = [];
-		for (let path of paths)
+		const services = [];
+		for (const path of paths)
 			services.push(DependencyManager.ServiceFrom(path));
 		return services;
 	}
@@ -46,7 +46,7 @@ class DependencyManager {
 			{
 				name: "utils",
 				dependencies: [],
-				type: typeof(Object),
+				type: typeof Object,
 				object: utils,
 				initial: utils,
 			}
@@ -69,10 +69,10 @@ class DependencyManager {
 		if (service.name == "utils")
 			return;
 		if (referer != undefined) {
-			let dependant = DependencyManager.MutuallyDependent(service, referer) &&
+			const dependant = DependencyManager.MutuallyDependent(service, referer) &&
 				!(this.reflected.includes(service.name) && this.reflected.includes(referer.name));
 			if (dependant) {
-				let instance = DependencyManager.Reflect(service.type);
+				const instance = DependencyManager.Reflect(service.type);
 				this.reflected.push(service.name);
 				let found = false;
 				for (let i = 0; i < this.instances.length; i++)
@@ -95,12 +95,12 @@ class DependencyManager {
 				if (dep != undefined)
 					this.CreateInstanceOf(dep, service);
 			}
-		let ctorProps = service.dependencies.map(d => d == "utils" ? this.utils : this.Find(d));
+		const ctorProps = service.dependencies.map(d => d == "utils" ? this.utils : this.Find(d));
 		let i = 0;
 		let ctorPropStr = "";
-		ctorProps.map(p => ctorPropStr += `ctorProps[${i++}],`);
+		ctorProps.map(() => ctorPropStr += `ctorProps[${i++}],`);
 		ctorPropStr = `new service.type(${ctorPropStr})`.replace(",)", ")");
-		let instance = eval(ctorPropStr);
+		const instance = eval(ctorPropStr);
 		let found = false;
 		for (let i = 0; i < this.instances.length; i++)
 			if (this.instances[i].name.toLowerCase() == service.name.toLowerCase()) {
@@ -127,9 +127,9 @@ class DependencyManager {
 	 */
 	static ServiceFrom(path) {
 		let type = require(path);
-		let key = Object.keys(type)[0];
+		const key = Object.keys(type)[0];
 		type = type[key];
-		let service = {
+		const service = {
 			name: type.name,
 			dependencies: DependencyManager.GetDependencies(type),
 			type,
@@ -157,10 +157,10 @@ class DependencyManager {
 	 * Returns services' names ordered from least to most used.
 	 */
 	static OrderDependencies(services) {
-		let list = {};
+		const list = {};
 		let deps = [];
 		services.map(service => deps = deps.concat(service.dependencies));
-		for (let s of deps)
+		for (const s of deps)
 			if (list[s] != undefined)
 				list[s] += 1;
 			else

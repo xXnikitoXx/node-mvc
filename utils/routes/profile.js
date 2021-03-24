@@ -34,7 +34,7 @@ class Profile extends Controller {
 
 	async IndexPost(req) {
 		this.model.user = req.user;
-		let user = {
+		const user = {
 			...this.model.user,
 			...req.body,
 		};

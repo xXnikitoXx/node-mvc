@@ -1,4 +1,3 @@
-const passport = require("passport");
 const { Strategy: LocalStrategy } = require("passport-local");
 const crypto = {
 	SHA256: require("sha256"),
@@ -6,9 +5,9 @@ const crypto = {
 };
 
 module.exports = (utils) => new LocalStrategy((username, password, done) => {
-	let user = utils.db.Collection("users").findOne({ username: username });
+	const user = utils.db.Collection("users").findOne({ username: username });
 	user.then(user => {
-		if (user == null)
+		if (user === null)
 			done(null, false);
 		else {
 			password = crypto.SHA256(utils.appSettings.secret + password + user.joinDate).toString();

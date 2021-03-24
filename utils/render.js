@@ -16,7 +16,7 @@ class Renderer {
 		this.useUrls = useUrls;
 		this.pattern = {
 			openTag: /<(if|for|switch|import|export|request|layout|view)\b(.*)>/,
-		}
+		};
 	}
 
 	/**
@@ -30,64 +30,69 @@ class Renderer {
 		if (!html.includes("<") && !html.includes(">"))
 			if (fs.existsSync(html))
 				html = fs.readFileSync(html).toString();
-		let items = new Iterator(this.model).ListItems();
-		while (html.match(this.pattern.openTag) != null) {
-			let match = html.match(this.pattern.openTag);
-			let index = match.index;
-			let [ tag, operator, statement ] = match;
+				const items = new Iterator(this.model).ListItems();
+		while (html.match(this.pattern.openTag) !== null) {
+			const match = html.match(this.pattern.openTag);
+			const index = match.index;
+			const [ tag, operator ] = match;
+			let [ , , statement ] = match;
 			let body = html.substring(index + tag.length);
-			let nextClosingTag = Renderer.Pair(operator, body);
+			const nextClosingTag = Renderer.Pair(operator, body);
 			body = body.substring(0, nextClosingTag);
 			switch (operator) {
-				case "if":
-					let ifResult = eval(statement.replace(/model./g, "this.model."));
+				case "if": {
+					const ifResult = eval(statement.replace(/model./g, "this.model."));
 					html = html.substring(0, index) + (ifResult ? body : "") + html.substring(index + tag.length + nextClosingTag + `</${operator}>`.length);
 					break;
-				case "for":
+				}
+				case "for": {
 					if (body.includes("<import")) {
-						let innerMatch = body.match(/<(import)\b(.*)>/);
-						let innerIndex = innerMatch.index;
-						let [ innerTag, innerOperator, innerStatement ] = innerMatch;
+						const innerMatch = body.match(/<(import)\b(.*)>/);
+						const innerIndex = innerMatch.index;
+						const [ innerTag, innerOperator, innerStatement ] = innerMatch;
 						let innerBody = body.substring(innerIndex + innerTag.length);
-						let nextInnerClosingTag = Renderer.Pair(innerOperator, innerBody);
+						const nextInnerClosingTag = Renderer.Pair(innerOperator, innerBody);
 						innerBody = innerBody.substring(0, nextInnerClosingTag);
 						innerBody = Renderer.RenderImport(this, innerBody, req, innerStatement, this.utils, this.useUrls);
 						body = body.substring(0, innerIndex) + innerBody + body.substring(innerIndex + innerTag.length + nextInnerClosingTag + `</${innerOperator}>`.length);
 					}
-					let template = body;
+					/* eslint-disable no-unused-vars */
+					const template = body;
 					body = "";
-					function iterateWith(str, values) {
+					const iterateWith = (str, values) => {
 						let result = str;
-						for (let v in values) {
+						for (const v in values) {
 							result = result.split("\n");
-							for (let l in result)
-								if (result[l].match(/<(if|for|switch|case)(.*)>/) != null)
+							for (const l in result)
+								if (result[l].match(/<(if|for|switch|case)(.*)>/) !== null)
 									result[l] = result[l].replace(new RegExp(`([^.])\\b(${v})\\b`, "g"), `$1(${JSON.stringify(values[v])})`);
-							let properties = new Iterator(values[v]).ListItems();
+							const properties = new Iterator(values[v]).ListItems();
 							result = result.join("\n").replace(new RegExp(`{{${v}}}`, "g"), values[v]);
-							for (let property of properties)
+							for (const property of properties)
 								result = result.replace(new RegExp(`{{${v}.${property.name}}}`, "g"), property.value);
 							result = Renderer.Spreads(result, values[v], v);
 						}
 						return result;
-					}
-					let variables = statement.split("let ")[1].split(statement.includes(" of ") ? " of " : statement.includes(" in ") ? " in " : "=")[0].replace(/[\[\]]/g, "").replace(" ", "").split(",");
+					};
+					/* eslint-enable no-unused-vars */
+					const variables = statement.split("let ")[1].split(statement.includes(" of ") ? " of " : statement.includes(" in ") ? " in " : "=")[0].replace(/[[\]]/g, "").replace(" ", "").split(",");
 					variables.toValues = function() {
-						let result = {};
-						let names = this;
+						const result = {};
+						const names = this;
 						let i = 0;
-						for (let arg of arguments)
+						for (const arg of arguments)
 							result[names[i++]] = arg;
 						return result;
-					}
-					await (eval(`async () => {
+					};
+					await eval(`async () => {
 						for (${statement.replace(/model/g, "this.model")})
 							body += await this.Render(iterateWith(template, variables.toValues(${variables.join(", ")})), req, renderExports);
-					}`))();
+					}`)();
 					html = html.substring(0, index) + body + html.substring(index + tag.length + nextClosingTag + `</${operator}>`.length);
 					break;
-				case "switch":
-					let switchResult = eval(statement.replace(/model./g, "this.model."));
+				}
+				case "switch": {
+					const switchResult = eval(statement.replace(/model./g, "this.model."));
 					let cases = body.split("<case ");
 					cases.shift();
 					cases = cases.map(c => ({
@@ -99,32 +104,35 @@ class Renderer {
 						body: c.body.split(`${c.statement}>\r\n`)[1].split("</case>")[0],
 					}));
 					let solved = false;
-					for (let c of cases)
+					for (const c of cases)
 						if (c.result == switchResult) {
 							solved = true;
 							html = html.substring(0, index) + c.body + html.substring(index + tag.length + nextClosingTag + `</${operator}>`.length);
 							break;
 						}
-					let defaultMatch = body.match(/<default>[\s\S]*<\/default>/g);
+						const defaultMatch = body.match(/<default>[\s\S]*<\/default>/g);
 					if (!solved)
-						if (defaultMatch != null)
+						if (defaultMatch !== null)
 							html = html.substring(0, index) + defaultMatch[0].slice(9, -10) + html.substring(index + tag.length + nextClosingTag + `</${operator}>`.length);
 						else
 							html = html.substring(0, index) + html.substring(index + tag.length + nextClosingTag + `</${operator}>`.length);
 					break;
-				case "import":
-					for (let item of items)
+				}
+				case "import": {
+					for (const item of items)
 						statement = statement.replace(new RegExp("{{model." + item.name + "}}", "g"), item.value);
 					body = await Renderer.RenderImport(this, body, req, statement, this.utils, this.useUrls, renderExports);
 					html = html.substring(0, index) + body + html.substring(index + tag.length + nextClosingTag + `</${operator}>`.length);
 					break;
-				case "export":
+				}
+				case "export": {
 					if (renderExports)
 						html = html.substring(0, index) + body + html.substring(index + tag.length + nextClosingTag + `</${operator}>`.length);
 					else
 						html = html.substring(0, index) + `<_export ${this.utils.appSettings.mvc.templates.defaultTarget}>\r\n` + body + "\r\n</_export>" + html.substring(index + tag.length + nextClosingTag + `</${operator}>`.length);
 					break;
-				case "request":
+				}
+				case "request": {
 					let [ type, url ] = statement.split(" ").filter(s => s.length > 0);
 					type = type.toLowerCase();
 					url = url.replace(/~\//g, req.hostname.replace("localhost", "http://localhost") + "/");
@@ -134,17 +142,17 @@ class Renderer {
 							.split("</headers>")[0]
 							.replace(/\r\n/g, "\n")
 							.split("\n")
-							.filter(h => s.length > 0);
+							.filter(h => h.length > 0);
 					let error = "";
 					if (body.includes("<error>") && body.includes("</error>"))
 						error = await this.Render(body.split("<error>")[1].split("</error>")[0], req, renderExports);
 					try {
-						let hasBody = [ "get", "head", "delete", "options" ].includes(type);
-						let data = hasBody ? (
+						const hasBody = [ "get", "head", "delete", "options" ].includes(type);
+						const data = hasBody ?
 								body.includes("<data>") && body.includes("</data>") ?
 								JSON.parse(body.split("<data>")[1].split("</data>")[0]) : {}
-							) : undefined;
-						let response = await this.utils.httpManager[type](url, hasBody ? data : headers, hasBody ? headers : undefined);
+							: undefined;
+						const response = await this.utils.httpManager[type](url, hasBody ? data : headers, hasBody ? headers : undefined);
 						if (body.includes("<response>") && body.includes("</response>")) {
 							body = body.split("<response>")[1].split("</response>")[0];
 							body = body.replace(/<status>/g, response.status)
@@ -157,26 +165,28 @@ class Renderer {
 						html = html.substring(0, index) + body + html.substring(index + tag.length + nextClosingTag + `</${operator}>`.length);
 					} catch (e) {
 						html = html.substring(0, index) +
-							(await this.Render(error.replace(/{{message}}/g, e.toString()), req, renderExports)) +
+							await this.Render(error.replace(/{{message}}/g, e.toString()), req, renderExports) +
 							html.substring(index + tag.length + nextClosingTag + `</${operator}>`.length);
 					}
 					break;
-				case "layout":
+				}
+				case "layout": {
 					if (renderExports) {
-						let layoutPath = path.join(this.utils.public, statement.replace(/[\s\\\.\-]/g, "/") + ".html");
+						const layoutPath = path.join(this.utils.public, statement.replace(/[\s\\.-]/g, "/") + ".html");
 						if (!fs.existsSync(layoutPath))
 							throw new Error(layoutError);
-						let layout = fs.readFileSync(layoutPath).toString();
-						let [ start, end ] = layout.split("<view>");
+							const layout = fs.readFileSync(layoutPath).toString();
+							const [ start, end ] = layout.split("<view>");
 						if (end == undefined)
 							throw new Error(layoutStructError);
 						html = html.substring(0, index) + start + body + end + html.substring(index + tag.length + nextClosingTag + `</${operator}>`.length);
 					} else
 						html = html.substring(0, index) + `<_layout ${this.utils.appSettings.mvc.templates.defaultTarget}>\r\n` + body + "\r\n</_layout>" + html.substring(index + tag.length + nextClosingTag + `</${operator}>`.length);
 					break;
+				}
 			}
 		}
-		for (let item of items)
+		for (const item of items)
 			html = html.replace(new RegExp("{{model." + item.name + "}}", "g"), item.value)
 				.replace(new RegExp("~/", "g"), req.hostname);
 		html = Renderer.Spreads(html, this.model);
@@ -184,7 +194,7 @@ class Renderer {
 	}
 
 	static async RenderImport(instance, body, req, statement, utils, useUrls, renderExports) {
-		let exports = Renderer.Import(statement, utils, useUrls);
+		const exports = Renderer.Import(statement, utils, useUrls);
 		body = await instance.Render(body, req, renderExports);
 		Object.keys(exports)
 		.forEach(e => body = body.replace(new RegExp(`<${e}>`, "g"), exports[e]));
@@ -193,29 +203,29 @@ class Renderer {
 
 	static Import(statement, utils, useUrls) {
 		let content = utils.templates[useUrls ? "loadByUrl" : "load"](statement.slice(1));
-		if (content == null && useUrls)
+		if (content === null && useUrls)
 			content = utils.templates.load(statement.slice(1));
-		if (content == null)
+		if (content === null)
 			throw new Error(templateError);
-		let pairs = [];
-		let exports = {};
-		let total = content.match(/<export .*>/g).length;
+		const pairs = [];
+		const exports = {};
+		const total = content.match(/<export .*>/g).length;
 		for (let i = 0; i < total; i++)
 			pairs.push([ Renderer.NthOccurrence(content, "<export ", i) ]);
 		pairs.forEach(p => {
-			let name = content.substring(p[0] + "<export ".length).split(">")[0];
-			let bodyIndex = p[0] + "<export ".length + name.length + 1;
+			const name = content.substring(p[0] + "<export ".length).split(">")[0];
+			const bodyIndex = p[0] + "<export ".length + name.length + 1;
 			p[1] = Renderer.Pair("export", content.substring(bodyIndex));
-			let body = content.substring(bodyIndex, p[1] + bodyIndex);
+			const body = content.substring(bodyIndex, p[1] + bodyIndex);
 			exports[name] = body;
 		});
 		return exports;
 	}
 
 	static Spreads(html, model, name = "model") {
-		let spreads = html.match(new RegExp(`{{(\.\.\.${name}.*)}}`, "g"));
-		if (spreads != null) {
-			for (let sp of spreads)
+		const spreads = html.match(new RegExp(`{{(...${name}.*)}}`, "g"));
+		if (spreads !== null) {
+			for (const sp of spreads)
 				try {
 					let spreaded = JSON.stringify(eval(sp.replace(new RegExp(`{{...${name}}}`, "g"), "{{...model}}").slice(5, -2)), null, "\t")
 					.replace(/\t"([.\w]*)": {/, "get $1() { return {")
@@ -230,13 +240,13 @@ class Renderer {
 	}
 
 	static Pair(tag, body) {
-		let parts = body.split(`</${tag}>`);
+		const parts = body.split(`</${tag}>`);
 		let openTags = 0;
 		let closingTags = 0;
-		for (let p of parts) {
+		for (const p of parts) {
 			closingTags++;
-			let match = p.match(new RegExp(`<${tag}(.*)`, "g"));
-			if (match != null)
+			const match = p.match(new RegExp(`<${tag}(.*)`, "g"));
+			if (match !== null)
 				openTags += match.length;
 			else {
 				if (closingTags > openTags)

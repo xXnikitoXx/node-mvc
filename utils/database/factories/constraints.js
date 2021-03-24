@@ -6,28 +6,24 @@ class Constraint {
 		this.max = Infinity;
 		this.decimals = 10;
 		this.pattern = "";
-		for (let property in properties)
+		for (const property in properties)
 			this[property] = properties[property];
 	}
 
 	set Min(value) {
 		this.min = value;
-		return this;
 	}
 
 	set Max(value) {
 		this.min = value;
-		return this;
 	}
 
 	set Type(value) {
 		this.type = value;
-		return this;
 	}
 
 	set Pattern(value) {
 		this.pattern = value;
-		return this;
 	}
 }
 
@@ -38,7 +34,6 @@ class Constraints {
 
 	set New(constraint) {
 		this.constraints.push(constraint);
-		return this;
 	}
 
 	get All() { return this.constraints; }

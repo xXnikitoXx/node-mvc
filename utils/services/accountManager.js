@@ -8,7 +8,7 @@ const crypto = {
 	MD5: require("md5"),
 };
 
-const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+const emailRegex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
 /**
  * Controls main user collections.
@@ -28,7 +28,7 @@ class AccountManager {
 		this.userValidator = new Validator(userModel);
 		this.users.findOne({ username: "admin" })
 		.then(user => {
-			if (user == null)	
+			if (user === null)	
 				this.Register({
 					...defaultAdmin,
 					joinDate: Date.now(),
@@ -54,7 +54,7 @@ class AccountManager {
 					.count()
 					.then(count => {
 						if (count == 0)
-							if (data.email.match(emailRegex) != null)
+							if (data.email.match(emailRegex) !== null)
 								if (data.password == data.confirmPassword) {
 									delete data.confirmPassword;
 									delete data._csrf;
@@ -82,18 +82,16 @@ class AccountManager {
 
 	UpdateUser(user) {
 		return new Promise((resolve, reject) => {
-			let users = this.utils.db.Collection("users");
-			users.findOne({ id: user.id })
+			this.users.findOne({ id: user.id })
 			.then(dbUser => {
-				if (dbUser == null) {
-					users.insertOne(user)
-					.then(data => { resolve(user); })
+				if (dbUser === null)
+					this.users.insertOne(user)
+					.then(() => resolve(user))
 					.catch(reject);
-				} else {
-					users.updateOne({ id: dbUser.id }, { $set: user })
-					.then(data => { resolve(user); })
+				else
+					this.users.updateOne({ id: dbUser.id }, { $set: user })
+					.then(() => resolve(user))
 					.catch(reject);
-				}
 			})
 			.catch(err => {
 				this.utils.logger.messages.dbError(err);

@@ -11,12 +11,12 @@ class Iterator {
 	}
 
 	Iterate(obj, stack) {
-		for (let property in obj) {
-			if (obj.hasOwnProperty(property)) {
+		for (const property in obj) {
+			if (Object.prototype.hasOwnProperty.call(obj, property)) {
 				if (typeof obj[property] == "object")
 					this.Iterate(obj[property], stack + '.' + property);
 				else {
-					let item = { name: stack + '.' + property, value: obj[property] };
+					const item = { name: stack + '.' + property, value: obj[property] };
 					if (item.name[0] == ".")
 						item.name = item.name.slice(1);
 					this.list.push(item);

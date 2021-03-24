@@ -1,7 +1,5 @@
 const fs = require("fs");
-const csurf = require("csurf");
 const { ErrorHandler, HandleError } = require("./../error");
-const { Logger } = require("./../logger");
 const { Renderer } = require("./../render");
 const routes = JSON.parse(fs.readFileSync(__dirname + "/../../data/routes.json"));
 const messages = JSON.parse(fs.readFileSync(__dirname + "/../../data/messages.json"));
@@ -15,12 +13,12 @@ const customRoutes = JSON.parse(fs.readFileSync(__dirname + "/../../data/customR
  * @param {any} utils
  */
 module.exports = (app, utils) => {
-	for (let route in routes) {
+	for (const route in routes) {
 		utils.logger.messages.configuring(route, "GET");
 		utils.templates.register(routes[route], [ route ]);
 		app.instance.get(route, (req, res) => {
 			utils.logger.messages.request(route);
-			let renderer = new Renderer({
+			const renderer = new Renderer({
 				title: route[1].toUpperCase() + route.slice(2),
 				user: req.user,
 			}, utils);
@@ -29,27 +27,25 @@ module.exports = (app, utils) => {
 	}
 
 	utils.templates.register("error", Object.keys(messages).map(k => "/" + k), "Error");
-	for (let message in messages) {
+	for (const message in messages) {
 		utils.logger.messages.configuring("/" + message, "GET");
-		app.instance.get("/" + message, (req, res) => {
+		app.instance.get("/" + message, () => {
 			utils.logger.messages.request("/" + message);
-			let errorCode = Number(message);
+			const errorCode = Number(message);
 			throw new ErrorHandler(errorCode, messages[message]);
 		});
 	}
 
-	for (let route of routeFiles)
+	for (const route of routeFiles)
 		require(route)(app, utils);
 
-	for (let route of customRoutes)
+	for (const route of customRoutes)
 		require(route)(app, utils);
 
-	app.instance.use((err, req, res, next) => new Promise(async () => await HandleError(err, req, res, utils)).then());
+	app.instance.use((err, req, res, next) => (async () => await HandleError(err, req, res, next, utils))());
 	app.instance.use((req, res, next) => {
-		if (!req.route) {
-			let errorCode = 404;
-			res.redirect("/" + errorCode);
-		}
+		if (!req.route)
+			res.redirect("/404");
 		next();
 	});
 };

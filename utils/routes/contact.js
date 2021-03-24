@@ -9,6 +9,10 @@ const { Controller } = require("./controller");
 class Contact extends Controller {
 	DescribeRoutes() {
 		this.prefix = "";
+
+		this.TermsTitle = "Terms of Service";
+		this.PrivacyTitle = "Privacy Policy";
+		this.ContactTitle = "Contact Us";
 	}
 
 	async Terms() {
