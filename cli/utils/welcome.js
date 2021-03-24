@@ -6,4 +6,4 @@ module.exports = logger => {
 	logger.title(title);
 	logger.subtitle(subtitle);
 	logger.line();
-}
+};

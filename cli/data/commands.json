@@ -21,12 +21,14 @@
 		"args": [
 			{ "arg": "type", "required": true },
 			{ "arg": "name", "required": true },
-			{ "arg": "description", "required": false }
+			{ "arg": "model", "required": false },
+			{ "arg": "prop(s)", "required": false }
 		],
 		"help": {
 			"type": "Type of the element you want to create: controller|view|service",
 			"name": "The name of the element",
-			"description": "The description which will be put in the created element as comment"
+			"model": "Target model the CRUD operations will be written for",
+			"prop": "Each property which will have separate update function"
 		}
 	},
 	{

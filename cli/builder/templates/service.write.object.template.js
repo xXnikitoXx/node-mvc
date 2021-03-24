@@ -6,10 +6,10 @@
 				if (§singular._id) {
 					_id = ObjectId(§singular._id);
 					delete §singular._id;
-					result = await this.§plural.findOneAndUpdate(_id != null ? { _id } : {}, { $set: §singular }, { upsert: true });
+					result = await this.§plural.findOneAndUpdate(_id !== null ? { _id } : {}, { $set: §singular }, { upsert: true });
 				} else
 					result = await this.§plural.insertOne(§singular);
-			return (result.value && result.value._id) || result._id || result.insertedId;
+			return result.value && result.value._id || result._id || result.insertedId;
 		}
 		throw new Error(this.validatorError);
 	}

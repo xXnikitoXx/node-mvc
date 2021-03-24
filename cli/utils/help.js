@@ -9,4 +9,4 @@ module.exports = (logger, target) => {
 	if (target == undefined)
 		return logger.listCommands(title, commands);
 	logger.commandUsage(target);
-}
+};

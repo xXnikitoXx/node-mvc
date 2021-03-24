@@ -1,44 +1,7 @@
-<!DOCTYPE html>
-<html>
-	<head>
-		<title>{{model.title}}</title>
-		<meta charset="utf-8" />
-		<link rel="stylesheet" href="materialize/css/materialize.css">
-		<link rel="stylesheet" href="css/navbar.css">
-		<link rel="stylesheet" href="css/error.css">
-		<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" crossorigin="anonymous">
-		<script src="js/jquery.js"></script>
-		<script src="materialize/js/materialize.js"></script>
-		<script src="js/vue.js"></script>
-		<script type="module" src="js/pager/pager.js"></script>
-		<import templates.scripts.model>
-			<default>
-			<user>
-		</import>
-	</head>
-	<body>
-		<lock>
-			<import templates.generic.navbar>
-				<default>
-				<script src="js/home/navbar.js"></script>
-			</import>
-		</lock>
-		<main>
-			<export default>
-				Welcome to my §name page.
-				<script>
-					for (let i = 0; i < navbar.leftTabs.length; i++)
-						navbar.leftTabs[i].active = false;
-					for (let i = 0; i < navbar.rightTabs.length; i++)
-						navbar.rightTabs[i].active = false;
-				</script>
-			</export>
-		</main>
-		<lock>
-			<import templates.generic.footer>
-				<default>
-				<script src="js/home/footer.js"></script>
-			</import>
-		</lock>
-	</body>
-</html>
+<layout layouts.main>
+	<export default>
+		<h1 class="center-align">
+			Welcome to my §name page.
+		</h1>
+	</export>
+</layout>

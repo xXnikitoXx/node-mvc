@@ -12,7 +12,7 @@ const getType = (path) => {
 		return "Service";
 	if (path.includes("public"))
 		return "View";
-}
+};
 
 const types = {
 	controller: controllers,
@@ -34,8 +34,8 @@ const target = (type, name) => type == "any" || type == "all" ? Object.keys(type
 let type, name;
 
 module.exports = function() {
-	let logger = arguments[0];
-	if (arguments.length == 2)
+	const logger = arguments[0];
+	if (arguments.length == 3)
 		[ type, name ] = [ "any", arguments[1] ];
 	else if (!Object.keys(types).includes(arguments[1]))
 		[ type, name ] = [ arguments[1] == "*" ? "all" : "any", arguments[2] ];
@@ -54,14 +54,13 @@ module.exports = function() {
 			break;
 	}
 
-
-	let targetPath = target(type, name);
+	const targetPath = target(type, name);
 	if (Array.isArray(targetPath)) {
-		let targets = targetPath.filter(t => fs.existsSync(t));
-		let simplified = targets.map(t => ({
-			type: getType(t),
-			name: name,
-			path: t,
+		const targets = targetPath.filter(t => fs.existsSync(t));
+		const simplified = targets.map(path => ({
+			type: getType(path),
+			name,
+			path,
 		}));
 		if (targets.length == 0)
 			return logger.messages.builderError(`\tThere aren't any elements with name "${name}"!`);
@@ -78,7 +77,7 @@ module.exports = function() {
 			});
 			return;
 		} else {
-			let lines = [
+			const lines = [
 				"\tThere are multiple instances with this name but different type:",
 				simplified.map(s => `\t\t${s.type} "${s.name}" in "${s.path}"`).join(",\n"),
 				`\tPlease enter specific type or * for all!`,

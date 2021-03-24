@@ -1,13 +1,9 @@
 const fs = require("fs");
-const path = require("path");
+const { ObjectId } = require("mongodb");
 const { Validator } = require("./../database/validator");
 const dbConfig = JSON.parse(fs.readFileSync(__dirname + "/../../data/dbsettings.json")).mongo.collections;
 const §singularModel = dbConfig.§plural.model;
 
-/**
- * §description.
- * @class
- */
 class §Name {
 	/**
 	 * Initializes new §Name.

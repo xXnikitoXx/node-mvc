@@ -7,15 +7,13 @@ const controllers = path.join(`${directory}/utils/routes`);
 const views = path.join(`${directory}/public`);
 const services = path.join(`${directory}/utils/services`);
 
-let type, name, description, template, target;
+let type, name, template, target;
 
 module.exports = function() {
 	const controller = () => {
-		[ logger, type, name, description ] = arguments;
+		[ logger, type, name ] = arguments;
 		template = fs.readFileSync(`${__dirname}/templates/${type}.template.js`).toString();
-		template = template
-			.replace(/§name/g, name)
-			.replace(/§description/g, description);
+		template = template.replace(/§name/g, name);
 		target = path.join(controllers, name + ".js");
 		if (fs.existsSync(target))
 			return logger.messages.builderError(`\tThis ${type} already exists!`);
@@ -26,21 +24,20 @@ module.exports = function() {
 	};
 
 	const service = () => {
-		[ logger, type, name, description ] = arguments;
+		[ logger, type, name ] = arguments;
 		name = name.replace(/\s/g, "_");
 		name = name[0].toLowerCase() + name.slice(1);
-		Name = name[0].toUpperCase() + name.slice(1);
+		const Name = name[0].toUpperCase() + name.slice(1);
 		let model = null;
-		let modelExists = false;
 		let plural, Plural, singular, Singular;
-		let props = [];
-		let methods = [];
-		if (arguments.length > 4) {
-			model = arguments[4];
+		const props = [];
+		const methods = [];
+		if (arguments.length > 3) {
+			model = arguments[3];
 			for (let i = 5; i < arguments.length; i++)
 				props.push(arguments[i]);
 		}
-		if (model != null) {
+		if (model !== null) {
 			plural = model[0].toLowerCase() + model.slice(1);
 			Plural = model[0].toUpperCase() + model.slice(1);
 			singular = pluralize.singular(model);
@@ -49,20 +46,20 @@ module.exports = function() {
 			if (pluralize.isSingular(plural))
 				[ plural, Plural, singular, Singular ] = [ singular, Singular, plural, Plural ];
 			console.log(plural, Plural, singular, Singular);
-			let collections = JSON.parse(fs.readFileSync(data + "/dbsettings.json")).mongo.collections;
+			const collections = JSON.parse(fs.readFileSync(data + "/dbsettings.json")).mongo.collections;
 			if (collections[plural]) {
-				let description = collections[plural].model;
-				let pre = __dirname + "/templates/service.";
-				let suf = ".template.js";
+				const description = collections[plural].model;
+				const pre = __dirname + "/templates/service.";
+				const suf = ".template.js";
 				methods.push(fs.readFileSync(`${pre}all${suf}`).toString());
 				methods.push(fs.readFileSync(`${pre}find${suf}`).toString());
 				methods.push(fs.readFileSync(`${pre}write.object${suf}`).toString());
 				methods.push(fs.readFileSync(`${pre}remove${suf}`).toString());
-				let writeProperty = fs.readFileSync(`${pre}write.property${suf}`).toString();
-				for (let prop of props)
+				const writeProperty = fs.readFileSync(`${pre}write.property${suf}`).toString();
+				for (const prop of props)
 					if (description[prop]) {
-						Prop = prop[0].toUpperCase() + prop.slice(1);
-						let method = writeProperty
+						const Prop = prop[0].toUpperCase() + prop.slice(1);
+						const method = writeProperty
 							.replace(/§prop/g, prop)
 							.replace(/§Prop/g, Prop);
 						methods.push(method);
@@ -77,8 +74,7 @@ module.exports = function() {
 			.replace(/§plural/g, plural)
 			.replace(/§Plural/g, Plural)
 			.replace(/§name/g, name)
-			.replace(/§Name/g, Name)
-			.replace(/§description/g, description);
+			.replace(/§Name/g, Name);
 		target = path.join(services, name + ".js");
 		if (fs.existsSync(target))
 			return logger.messages.builderError(`\tThis ${type} already exists!`);
@@ -86,18 +82,12 @@ module.exports = function() {
 			fs.writeFileSync(target, template);
 			logger.messages.builderSuccess(`Service "${name}" created successfully.`);
 		} catch(e) { logger.messages.builderError("\n" + e); }
-		/**
-		 * §methods
-		 */
 	};
 
 	const view = () => {
 		[ logger, type, name ] = arguments;
 		template = fs.readFileSync(`${__dirname}/templates/${type}.template.html`).toString();
-		let Name = name.replace(/\s/g, "_");
-		template = template
-			.replace(/§name/g, name.replace(/\s/g, "_"))
-			.replace(/§description/g, description);
+		template = template.replace(/§name/g, name.replace(/\s/g, "_"));
 		target = path.join(views, name + ".html");
 		if (fs.existsSync(target))
 			return logger.messages.builderError(`\tThis ${type} already exists!`);
