@@ -1,7 +1,7 @@
 const fs = require("fs");
 const path = require("path");
 
-let utils = {
+const utils = {
 	public: path.join(__dirname + "/../../public"),
 	data: path.join(__dirname + "/../../data"),
 	middleware: path.join(__dirname + "/../../utils/middleware"),
@@ -19,11 +19,11 @@ utils.templates = {
 		});
 	},
 	load(template) {
-		let match = this.list.filter(t => t.id == template);
+		const match = this.list.filter(t => t.id == template);
 		if (match.length > 0)
-			if (match[0].cache == null)
+			if (match[0].cache === null)
 				return (() => {
-					let target = path.join(utils.public, template.replace(/[\s\\\.\-]/g, "/")) + ".html";
+					const target = path.join(utils.public, template.replace(/[\s\\.-]/g, "/")) + ".html";
 					if (fs.existsSync(target))
 						match[0].cache = fs.readFileSync(target).toString();
 					return match[0].cache;
@@ -32,11 +32,11 @@ utils.templates = {
 		else return null;
 	},
 	loadByUrl(url) {
-		let match = this.list.filter(t => t.urls.some(u => u == url));
+		const match = this.list.filter(t => t.urls.some(u => u == url));
 		if (match.length > 0)
-			if (match[0].cache == null)
+			if (match[0].cache === null)
 				return (() => {
-					let target = path.join(utils.public, match[0].id.replace(/[\s\\\.\-]/g, "/")) + ".html";
+					const target = path.join(utils.public, match[0].id.replace(/[\s\\.-]/g, "/")) + ".html";
 					if (fs.existsSync(target))
 						match[0].cache = fs.readFileSync(target).toString();
 					return match[0].cache;
