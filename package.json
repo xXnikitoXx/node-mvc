@@ -29,6 +29,9 @@
 		"pluralize": "^8.0.0",
 		"readline-sync": "^1.4.10",
 		"sha256": "^0.2.0",
-		"socket.io": "^2.3.0"
+		"socket.io": "^2.4.1"
+	},
+	"devDependencies": {
+		"eslint": "^7.22.0"
 	}
 }
