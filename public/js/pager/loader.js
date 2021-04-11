@@ -56,7 +56,7 @@ export class Loader {
 							if (script.src == "")
 								this.LoadScript.inline(script.text);
 							else
-								this.LoadScript.external(script.src);
+								this.LoadScript.external(script.src, script.type == "module");
 							script.remove();
 						});
 						setTimeout(() => {
@@ -86,9 +86,11 @@ export class Loader {
 
 	get LoadScript() {
 		return {
-			external: (url) => {
+			external: (url, module = false) => {
 				let script = document.createElement("script");
 				script.src = url;
+				if (module)
+					script.type = "module";
 				document.querySelector("body > main").appendChild(script);
 			},
 			inline: (content) => {
