@@ -16,5 +16,10 @@ module.exports = {
 		"prefer-const": [ "warn", ],
 		"no-extra-parens": [ "warn", "all", ],
 		"class-methods-use-this": [ "warn", ],
-	}
+	},
+	valid: [
+		{
+			globals: [ "__main", ],
+		},
+	],
 };

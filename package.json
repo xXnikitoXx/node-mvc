@@ -1,18 +1,18 @@
 {
-	"name": "node-mvc",
+	"name": "@tech-lab/node-mvc",
 	"version": "1.0.0",
 	"description": "",
-	"main": "server.js",
+	"main": "index.js",
 	"scripts": {
 		"start": "node index",
-		"test": "mocha tests",
-		"cli": "node ./cli/cli"
+		"cli": "node ./cli/cli",
+		"test": "nyc --reporter=text mocha tests",
+		"test-adv": "nyc --reporter=html mocha tests & start ./coverage/index.html"
 	},
 	"author": "xXnikitoXx",
 	"license": "ISC",
 	"dependencies": {
 		"body-parser": "^1.19.0",
-		"chai": "^4.2.0",
 		"colors": "^1.4.0",
 		"connect-mongo": "^3.2.0",
 		"cookie-parser": "^1.4.5",
@@ -21,17 +21,19 @@
 		"express-session": "^1.17.1",
 		"helmet": "^3.23.3",
 		"md5": "^2.3.0",
-		"mocha": "^8.2.0",
 		"mongodb": "^3.6.2",
 		"node-fetch": "^2.6.1",
+		"node-watch": "^0.7.1",
 		"passport": "^0.4.1",
 		"passport-local": "^1.0.0",
 		"pluralize": "^8.0.0",
 		"readline-sync": "^1.4.10",
-		"sha256": "^0.2.0",
-		"socket.io": "^2.4.1"
+		"sha256": "^0.2.0"
 	},
 	"devDependencies": {
-		"eslint": "^7.22.0"
+		"eslint": "^7.22.0",
+		"nyc": "^15.1.0",
+		"mocha": "^8.2.0",
+		"chai": "^4.2.0"
 	}
 }
