@@ -19,7 +19,7 @@ const HandleError = async (err, req, res, _, utils) => {
 		statusCode: err.statusCode,
 		message: err.message,
 	}, utils);
-	res.send(await renderer.Render(fs.readFileSync(__dirname + "/../public/error.html"), req));
+	res.send(await renderer.Render(fs.readFileSync(__main + "/public/error.html"), req));
 };
 
 module.exports = {

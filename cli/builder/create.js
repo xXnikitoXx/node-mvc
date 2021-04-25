@@ -1,7 +1,7 @@
 const fs = require("fs");
 const path = require("path");
 const pluralize = require("pluralize");
-const directory = `${__dirname}/../..`;
+const directory = __main;
 const data = path.join(`${directory}/data`);
 const controllers = path.join(`${directory}/utils/routes`);
 const views = path.join(`${directory}/public`);
@@ -37,7 +37,7 @@ module.exports = function() {
 			for (let i = 5; i < arguments.length; i++)
 				props.push(arguments[i]);
 		}
-		if (model !== null) {
+		if (model !== null && model.length > 0) {
 			plural = model[0].toLowerCase() + model.slice(1);
 			Plural = model[0].toUpperCase() + model.slice(1);
 			singular = pluralize.singular(model);
@@ -45,7 +45,6 @@ module.exports = function() {
 			Singular = singular[0].toUpperCase() + singular.slice(1);
 			if (pluralize.isSingular(plural))
 				[ plural, Plural, singular, Singular ] = [ singular, Singular, plural, Plural ];
-			console.log(plural, Plural, singular, Singular);
 			const collections = JSON.parse(fs.readFileSync(data + "/dbsettings.json")).mongo.collections;
 			if (collections[plural]) {
 				const description = collections[plural].model;

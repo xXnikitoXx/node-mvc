@@ -11,13 +11,13 @@ module.exports = (() => {
 		const target = path.join(__dirname, "/../../public/test.html");
 		// eslint-disable-next-line no-undef
 		it("creates view by given arguments", () => {
-			const args = [ logger, "view", "test" ];
+			const args = [ logger, "view", "test", {} ];
 			require("./../../cli/builder/create").apply(null, args);
 			expect(fs.existsSync(target)).to.be.true;
 		});
 		// eslint-disable-next-line no-undef
 		it("deletes view by given name", () => {
-			const args = [ logger, "view", "test" ];
+			const args = [ logger, "view", "test", {} ];
 			require("./../../cli/builder/remove").apply(null, args);
 			expect(fs.existsSync(target)).to.be.false;
 		});

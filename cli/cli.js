@@ -1,3 +1,4 @@
+global.__main = __dirname.includes("node_modules") ? `${__dirname}/../../../..` : `${__dirname}/../`;
 const fs = require("fs");
 const { Logger } = require("./../utils/logger");
 const logger = new Logger();

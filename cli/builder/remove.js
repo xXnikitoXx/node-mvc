@@ -1,6 +1,6 @@
 const fs = require("fs");
 const path = require("path");
-const directory = `${__dirname}/../..`;
+const directory = __main;
 const controllers = path.join(`${directory}/utils/routes`);
 const views = path.join(`${directory}/public`);
 const services = path.join(`${directory}/utils/services`);
@@ -29,7 +29,10 @@ const extentions = {
 const error = (type) => `\tThis ${type == "any" || type == "all" ? "element" : type} does not exist!`;
 const success = (type, name) => `${type[0].toUpperCase() + type.slice(1)} "${name}" removed successfully.`;
 
-const target = (type, name) => type == "any" || type == "all" ? Object.keys(types).map(t => path.join(types[t], name + extentions[t])) : path.join(types[type], name + extentions[type]);
+const target = (type, name) =>
+	type == "any" || type == "all" ?
+	Object.keys(types).map(t => path.join(types[t], name + extentions[t])) :
+	path.join(types[type], name + extentions[type]);
 
 let type, name;
 

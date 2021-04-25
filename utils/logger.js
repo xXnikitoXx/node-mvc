@@ -1,5 +1,8 @@
 const fs = require("fs");
-const config = JSON.parse(fs.readFileSync(__dirname + "/../data/appsettings.json"));
+let config = { logging: true };
+const configPath = __main + "/data/appsettings.json"
+if (fs.existsSync(configPath))
+	config = JSON.parse(fs.readFileSync(configPath));
 const colors = require("colors/safe");
 const readline = require("readline-sync");
 

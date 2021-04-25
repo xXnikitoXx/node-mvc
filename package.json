@@ -9,7 +9,7 @@
 		"test": "nyc --reporter=text mocha tests",
 		"test-adv": "nyc --reporter=html mocha tests & start ./coverage/index.html"
 	},
-	"author": "xXnikitoXx",
+	"author": "xxnikitoxx",
 	"license": "ISC",
 	"dependencies": {
 		"body-parser": "^1.19.0",
@@ -31,9 +31,9 @@
 		"sha256": "^0.2.0"
 	},
 	"devDependencies": {
+		"chai": "^4.2.0",
 		"eslint": "^7.22.0",
-		"nyc": "^15.1.0",
 		"mocha": "^8.2.0",
-		"chai": "^4.2.0"
+		"nyc": "^15.1.0"
 	}
 }

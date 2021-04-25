@@ -9,7 +9,9 @@ const cookieParser = require("cookie-parser");
 const csrf = require("csurf");
 const passport = require("passport");
 const loginRedirect = require("./../authentication/loginRedirect");
-const middlewareFiles = fs.readdirSync(__dirname).filter(route => route != "middleware.js").map(route => "./" + route.split(".js")[0]);
+const middlewareFiles = fs.readdirSync(__main + "/utils/middleware")
+	.filter(route => route != "middleware.js")
+	.map(route => "./" + route.split(".js")[0]);
 const csrfProtection = csrf({ cookie: true });
 
 /**
@@ -21,7 +23,7 @@ module.exports = (app, utils) => {
 	utils.passport = passport;
 	utils.loginRedirect = loginRedirect;
 	utils.csrfProtection = csrfProtection;
-	app.use(express.static(__dirname + "/../../public"));
+	app.use(express.static(__main + "/public"));
 	app.use(bodyParser.urlencoded({ extended: true }));
 	app.use(express.json({ type: [ "application/json", "text/plain"] }));
 	app.use(cookieParser());

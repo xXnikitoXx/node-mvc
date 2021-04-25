@@ -1,2 +1,7 @@
 .nyc_output
 coverage
+data
+public
+tests
+.eslintignore
+.eslintrc.js

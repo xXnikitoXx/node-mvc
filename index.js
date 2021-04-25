@@ -1,24 +1,37 @@
-const fs = require("fs");
-const { Server } = require("./utils/server");
-const injectorSettings = JSON.parse(fs.readFileSync(__dirname + "/data/injectorsettings.json"));
+const path = require("path");
+global.__main = path.dirname(require.main.filename);
 
-const server = new Server();
-server.Run().then(async () => {
-	let args = process.argv.slice(2) || null;
-	if (args.length > 0) {
-		const keepAlive = args[args.length - 1] == "keep-alive";
-		if (keepAlive)
-			args.splice(-1, 1);
-		switch (args[0]) {
-			case "inject":
-				args.splice(0, 1);
-				if (args[0] == "default")
-					args = injectorSettings.default.args.join(" ").split(" ");
-				for (let i = 0; i < args.length; i += 3)
-					await server.Inject(args[i], args[i + 1], args[i + 2]);
-				break;
-		}
-		if (!keepAlive)
-			process.exit(0);
-	}
-}).catch(console.log);
+const { App } = require("./utils/app");
+const { Constraint } = require("./utils/database/factories/constraints");
+const { Controller } = require("./utils/routes/controller");
+const { DBHelper: MongoDBHelper } = require("./utils/database/helpers/mongodb_helper");
+const { DependencyManager, ServiceOrganizer } = require("./utils/services/services");
+const { ErrorHandler, HandleError } = require("./utils/error");
+const { Factory } = require("./utils/database/factories/factory");
+const { Injector } = require("./utils/database/injector");
+const { Iterator } = require("./utils/iterator");
+const { Logger } = require("./utils/logger");
+const { Registrar } = require("./utils/permissions/registrar");
+const { Renderer } = require("./utils/render");
+const { Role } = require("./utils/permissions/role");
+const { Server } = require("./utils/server");
+const { Validator } = require("./utils/database/validator");
+
+module.exports = {
+	App,
+	Constraint,
+	Controller,
+	MongoDBHelper,
+	DependencyManager,
+	ErrorHandler,
+	Factory,
+	Injector,
+	Iterator,
+	Logger,
+	Registrar,
+	Renderer,
+	Role,
+	Server,
+	ServiceOrganizer,
+	Validator,
+};

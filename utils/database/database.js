@@ -3,8 +3,8 @@ const { MongoClient } = require("mongodb");
 const { DBHelper } = require("./helpers/mongodb_helper");
 const { Logger } = new require("./../logger");
 const logger = new Logger();
-const appSettings = JSON.parse(fs.readFileSync(__dirname + "/../../data/appsettings.json"));
-const dbSettings = JSON.parse(fs.readFileSync(__dirname + "/../../data/dbsettings.json"));
+const appSettings = JSON.parse(fs.readFileSync(__main + "/data/appsettings.json"));
+const dbSettings = JSON.parse(fs.readFileSync(__main + "/data/dbsettings.json"));
 
 module.exports = new Promise((resolve, reject) => {
 	let db;
