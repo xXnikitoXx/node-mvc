@@ -1,6 +1,6 @@
 {
 	"name": "@tech-lab/node-mvc",
-	"version": "1.0.0",
+	"version": "0.0.1",
 	"description": "",
 	"main": "index.js",
 	"scripts": {
@@ -35,5 +35,15 @@
 		"eslint": "^7.22.0",
 		"mocha": "^8.2.0",
 		"nyc": "^15.1.0"
-	}
+	},
+	"directories": {
+		"test": "tests"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://tl-git.tk/techlab/templates/backend/node-mvc.git"
+	},
+	"keywords": [
+		"mvc"
+	]
 }
