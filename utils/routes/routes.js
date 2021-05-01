@@ -5,7 +5,7 @@ const routes = JSON.parse(fs.readFileSync(__main + "/data/routes.json"));
 const messages = JSON.parse(fs.readFileSync(__main + "/data/messages.json"));
 const routeFiles = fs.readdirSync(__main + "/utils/routes")
 	.filter(route => route != "routes.js" && route != "controller.js")
-	.map(route => "./" + route.split(".js")[0]);
+	.map(route => __main + "/utils/routes/" + route);
 const customRoutes = JSON.parse(fs.readFileSync(__main + "/data/customRoutes.json"));
 
 /**

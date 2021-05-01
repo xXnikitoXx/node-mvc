@@ -23,75 +23,16 @@ module.exports = (app, utils) => {
 	utils.passport = passport;
 	utils.loginRedirect = loginRedirect;
 	utils.csrfProtection = csrfProtection;
+	utils.sources = JSON.parse(fs.readFileSync(utils.data + "/sources.json").toString());
+	utils.features = JSON.parse(fs.readFileSync(utils.data + "/features.json").toString());
 	app.use(express.static(__main + "/public"));
 	app.use(bodyParser.urlencoded({ extended: true }));
 	app.use(express.json({ type: [ "application/json", "text/plain"] }));
 	app.use(cookieParser());
 	app.use(helmet());
 	app.use((req, res, next) => {
-		const features = [
-			// "accelerometer 'none'",
-			// "ambient-light-sensor 'none'",
-			// "autoplay 'none'",
-			// "battery 'none'",
-			// "camera 'none'",
-			// "display-capture 'none'",
-			// "document-domain 'none'",
-			// "encrypted-media 'none'",
-			// "execution-while-not-rendered 'none'",
-			// "execution-while-out-of-viewport 'none'",
-			"fullscreen '*'",
-			// "geolocation 'none'",
-			// "gyroscope 'none'",
-			// "layout-animations 'none'",
-			// "legacy-image-formats 'none'",
-			// "magnetometer 'none'",
-			// "midi 'none'",
-			// "navigation-override 'none'",
-			// "oversized-images 'none'",
-			// "payment 'none'",
-			// "picture-in-picture 'none'",
-			// "publickey-credentials-get 'none'",
-			// "sync-xhr 'none'",
-			// "usb 'none'",
-			// "vr 'none'",
-			// "wake-lock 'none'",
-			// "screen-wake-lock 'none'",
-			// "web-share 'none'",
-			// "xr-spatial-tracking 'none'",
-		];
-		res.setHeader("Permissions-Policy", features.join("; "));
-		const csp = {
-			"default": [
-				`'self'`,
-				`'unsafe-eval'`,
-				`'unsafe-inline'`,
-				`techlab.ddns.net`,
-				`*.google.com`,
-				`*.cloudflare.com`,
-				`*.facebook.com`,
-				`*.fontawesome.com`,
-			],
-			"img": [
-				`*`,
-				`'self'`,
-				`data:`
-			],
-			"media": [
-				`*`
-			],
-			"script": [
-				`'self'`,
-				`'unsafe-eval'`,
-				`'unsafe-inline'`,
-				`techlab.ddns.net`,
-				`*.google.com`,
-				`*.cloudflare.com`,
-				`*.facebook.com`,
-				`*.fontawesome.com`,
-			],
-		};
-		res.setHeader("Content-Security-Policy", Object.keys(csp).map(src => `${src}-src ${csp[src].join(" ")}`).join("; "));
+		res.setHeader("Permissions-Policy", utils.features.join("; "));
+		res.setHeader("Content-Security-Policy", Object.keys(utils.sources).map(src => `${src}-src ${utils.sources[src].join(" ")}`).join("; "));
 		res.setHeader("Referrer-Policy", "strict-origin");
 		res.setHeader("Server", "Tech Lab");
 		res.setHeader("X-Powered-By", "Tech Lab");

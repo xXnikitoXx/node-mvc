@@ -1,0 +1,37 @@
+{
+	"default": [
+		"'self'",
+		"'unsafe-eval'",
+		"'unsafe-inline'",
+		"*.techlab-app.tk",
+		"*.google.com",
+		"*.googleapis.com",
+		"*.cloudflare.com",
+		"*.facebook.com",
+		"*.fontawesome.com",
+		"*.akamai.com",
+		"*.fastly.com"
+	],
+	"img": [
+		"*",
+		"'self'",
+		"data:"
+	],
+	"media": [
+		"*"
+	],
+	"script": [
+		"'self'",
+		"'unsafe-eval'",
+		"'unsafe-inline'",
+		"*.techlab-app.tk",
+		"*.google.com",
+		"*.googleapis.com",
+		"*.cloudflare.com",
+		"*.facebook.com",
+		"*.fontawesome.com",
+		"*.cdnjs.com",
+		"*.akamai.com",
+		"*.fastly.com"
+	]
+}
