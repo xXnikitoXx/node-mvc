@@ -11,7 +11,7 @@ const passport = require("passport");
 const loginRedirect = require("./../authentication/loginRedirect");
 const middlewareFiles = fs.readdirSync(__main + "/utils/middleware")
 	.filter(route => route != "middleware.js")
-	.map(route => "./" + route.split(".js")[0]);
+	.map(route => __main + "/utils/middleware/" + route.split(".js")[0]);
 const csrfProtection = csrf({ cookie: true });
 
 /**
