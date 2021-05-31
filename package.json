@@ -1,7 +1,7 @@
 {
 	"name": "@tech-lab/node-mvc",
 	"version": "0.0.1",
-	"description": "",
+	"description": "MVC based on express",
 	"main": "index.js",
 	"scripts": {
 		"start": "node index",
