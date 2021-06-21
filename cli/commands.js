@@ -1,4 +1,4 @@
-[
+module.exports = [
 	{
 		"cmd": "exit",
 		"description": "Exits the CLI",
@@ -50,4 +50,4 @@
 		"args": [],
 		"help": {}
 	}
-]
+];
